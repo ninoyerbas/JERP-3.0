@@ -1,0 +1,153 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Partner {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  passwordHash      String
+  firstName         String
+  lastName          String
+  companyName       String?
+  phone             String?
+  website           String?
+  taxId             String?
+  status            PartnerStatus @default(PENDING)
+  tier              PartnerTier @default(BRONZE)
+  commissionRate    Float    @default(0.25)
+  signupBonus       Float    @default(75.00)
+  payoutMinimum     Float    @default(50.00)
+  referralCode      String   @unique
+  totalReferrals    Int      @default(0)
+  activeCustomers   Int      @default(0)
+  totalEarnings     Float    @default(0.00)
+  pendingEarnings   Float    @default(0.00)
+  paidEarnings      Float    @default(0.00)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  referrals         Referral[]
+  commissions       Commission[]
+  payouts           Payout[]
+  clicks            ReferralClick[]
+}
+
+enum PartnerStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  TERMINATED
+}
+
+enum PartnerTier {
+  BRONZE  // 0-5 customers: 25% commission
+  SILVER  // 6-15 customers: 30% commission
+  GOLD    // 16+ customers: 35% commission
+}
+
+model Referral {
+  id                String   @id @default(uuid())
+  partnerId         String
+  partner           Partner  @relation(fields: [partnerId], references: [id])
+  customerEmail     String
+  customerName      String?
+  plan              String?  // Free, Starter, Pro, Enterprise
+  status            ReferralStatus @default(LEAD)
+  mrr               Float    @default(0.00)
+  signupDate        DateTime?
+  trialStartDate    DateTime?
+  conversionDate    DateTime?
+  cancellationDate  DateTime?
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  commissions       Commission[]
+}
+
+enum ReferralStatus {
+  LEAD           // Clicked link, no signup
+  TRIAL          // Started free trial
+  ACTIVE         // Paying customer
+  CANCELLED      // Churned
+  REFUNDED       // Refunded (no commission)
+}
+
+model Commission {
+  id                String   @id @default(uuid())
+  partnerId         String
+  partner           Partner  @relation(fields: [partnerId], references: [id])
+  referralId        String
+  referral          Referral @relation(fields: [referralId], references: [id])
+  type              CommissionType
+  amount            Float
+  rate              Float
+  status            CommissionStatus @default(PENDING)
+  periodStart       DateTime
+  periodEnd         DateTime
+  paidAt            DateTime?
+  payoutId          String?
+  payout            Payout?  @relation(fields: [payoutId], references: [id])
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+enum CommissionType {
+  SIGNUP_BONUS     // One-time bonus for new customer
+  RECURRING        // Monthly recurring commission
+  TIER_BONUS       // Bonus for reaching new tier
+}
+
+enum CommissionStatus {
+  PENDING          // Not yet eligible for payout
+  APPROVED         // Approved, ready for payout
+  PAID             // Included in payout
+  REVERSED         // Customer refunded/cancelled (clawback)
+}
+
+model Payout {
+  id                String   @id @default(uuid())
+  partnerId         String
+  partner           Partner  @relation(fields: [partnerId], references: [id])
+  amount            Float
+  method            String?  // Stripe, PayPal, ACH, Check
+  status            PayoutStatus @default(PENDING)
+  processedAt       DateTime?
+  referenceNumber   String?
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  commissions       Commission[]
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  CANCELLED
+}
+
+model ReferralClick {
+  id                String   @id @default(uuid())
+  partnerId         String
+  partner           Partner  @relation(fields: [partnerId], references: [id])
+  ipAddress         String
+  userAgent         String?
+  referrer          String?
+  landingPage       String?
+  utmSource         String?
+  utmMedium         String?
+  utmCampaign       String?
+  country           String?
+  city              String?
+  createdAt         DateTime @default(now())
+}
