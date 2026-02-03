@@ -46,7 +46,7 @@ public class TimesheetConfiguration : IEntityTypeConfiguration<Timesheet>
             .IsRequired();
 
         builder.Property(t => t.Notes)
-            .HasMaxLength(2000);
+            .HasMaxLength(1000);
 
         builder.Property(t => t.SubmittedAt)
             .IsRequired(false);
