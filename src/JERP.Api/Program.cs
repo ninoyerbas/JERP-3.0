@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
 using Serilog;
+using System.Text;
 using JERP.Api.Middleware;
 using JERP.Application;
 using JERP.Compliance;
@@ -109,8 +110,7 @@ builder.Services.AddDbContext<JerpDbContext>(options =>
 
 // Register application services
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddComplianceServices(builder.Configuration);
+builder.Services.AddComplianceServices();
 
 // Configure Kestrel
 builder.WebHost.ConfigureKestrel(options =>
@@ -151,9 +151,13 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<JerpDbContext>();
         await context.Database.MigrateAsync();
         
-        var dbInitializer = services.GetRequiredService<IDbInitializer>();
-        await dbInitializer.InitializeAsync();
-        await dbInitializer.SeedAsync();
+        // Initialize and seed if DbInitializer service is available
+        var dbInitializer = services.GetService<Infrastructure.Data.IDbInitializer>();
+        if (dbInitializer != null)
+        {
+            await dbInitializer.InitializeAsync();
+            await dbInitializer.SeedAsync();
+        }
         
         Log.Information("Database initialized and seeded successfully");
     }

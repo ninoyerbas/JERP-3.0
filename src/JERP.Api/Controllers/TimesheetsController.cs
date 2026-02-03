@@ -22,17 +22,15 @@ public class TimesheetsController : BaseApiController
     }
 
     /// <summary>
-    /// Get all timesheets with filters
+    /// Get timesheets by employee with pagination
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetAll(
+        [FromQuery] Guid employeeId,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20,
-        [FromQuery] int? employeeId = null,
-        [FromQuery] DateTime? startDate = null,
-        [FromQuery] DateTime? endDate = null)
+        [FromQuery] int pageSize = 20)
     {
-        var result = await _timesheetService.GetAllAsync(page, pageSize, employeeId, startDate, endDate);
+        var result = await _timesheetService.GetByEmployeeAsync(employeeId, page, pageSize);
         return Ok(result);
     }
 
@@ -40,7 +38,7 @@ public class TimesheetsController : BaseApiController
     /// Get timesheet by ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var timesheet = await _timesheetService.GetByIdAsync(id);
         
@@ -57,7 +55,7 @@ public class TimesheetsController : BaseApiController
     /// </summary>
     [HttpGet("employee/{employeeId}")]
     public async Task<IActionResult> GetByEmployee(
-        int employeeId,
+        Guid employeeId,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20)
     {
@@ -80,7 +78,7 @@ public class TimesheetsController : BaseApiController
     /// Update an existing timesheet
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] TimesheetUpdateRequest request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] TimesheetUpdateRequest request)
     {
         var timesheet = await _timesheetService.UpdateAsync(id, request);
         
@@ -97,15 +95,10 @@ public class TimesheetsController : BaseApiController
     /// Delete a timesheet
     /// </summary>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _timesheetService.DeleteAsync(id);
+        await _timesheetService.DeleteAsync(id);
         
-        if (!result)
-        {
-            return NotFound($"Timesheet with ID {id} not found");
-        }
-
         _logger.LogInformation("Timesheet deleted: {TimesheetId}", id);
         return NoContent();
     }
@@ -114,7 +107,7 @@ public class TimesheetsController : BaseApiController
     /// Submit a timesheet for approval
     /// </summary>
     [HttpPost("{id}/submit")]
-    public async Task<IActionResult> Submit(int id)
+    public async Task<IActionResult> Submit(Guid id)
     {
         var timesheet = await _timesheetService.SubmitAsync(id);
         
@@ -131,9 +124,9 @@ public class TimesheetsController : BaseApiController
     /// Approve a timesheet
     /// </summary>
     [HttpPost("{id}/approve")]
-    public async Task<IActionResult> Approve(int id)
+    public async Task<IActionResult> Approve(Guid id, [FromQuery] Guid approverId)
     {
-        var timesheet = await _timesheetService.ApproveAsync(id);
+        var timesheet = await _timesheetService.ApproveAsync(id, approverId);
         
         if (timesheet == null)
         {
@@ -148,7 +141,7 @@ public class TimesheetsController : BaseApiController
     /// Reject a timesheet
     /// </summary>
     [HttpPost("{id}/reject")]
-    public async Task<IActionResult> Reject(int id, [FromBody] RejectRequest request)
+    public async Task<IActionResult> Reject(Guid id, [FromBody] RejectRequest request)
     {
         var timesheet = await _timesheetService.RejectAsync(id, request.Reason);
         

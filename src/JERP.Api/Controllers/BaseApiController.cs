@@ -35,7 +35,7 @@ public abstract class BaseApiController : ControllerBase
     /// <summary>
     /// Returns a not found response with error message
     /// </summary>
-    protected new IActionResult NotFound(string message)
+    protected IActionResult NotFound(string message)
     {
         return base.NotFound(new { success = false, error = message });
     }

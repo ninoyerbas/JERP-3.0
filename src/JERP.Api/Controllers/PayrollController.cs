@@ -42,7 +42,7 @@ public class PayrollController : BaseApiController
     /// Get pay period by ID
     /// </summary>
     [HttpGet("periods/{id}")]
-    public async Task<IActionResult> GetPayPeriod(int id)
+    public async Task<IActionResult> GetPayPeriod(Guid id)
     {
         var payPeriod = await _payrollService.GetPayPeriodByIdAsync(id);
         
@@ -58,7 +58,7 @@ public class PayrollController : BaseApiController
     /// Get pay periods by year
     /// </summary>
     [HttpGet("periods/year/{year}")]
-    public async Task<IActionResult> GetPayPeriodsByYear(int year, [FromQuery] int? companyId = null)
+    public async Task<IActionResult> GetPayPeriodsByYear(int year, [FromQuery] Guid companyId)
     {
         var payPeriods = await _payrollService.GetPayPeriodsByYearAsync(year, companyId);
         return Ok(payPeriods);
@@ -68,7 +68,7 @@ public class PayrollController : BaseApiController
     /// Process payroll for a pay period
     /// </summary>
     [HttpPost("periods/{id}/process")]
-    public async Task<IActionResult> ProcessPayroll(int id)
+    public async Task<IActionResult> ProcessPayroll(Guid id)
     {
         var result = await _payrollService.ProcessPayrollAsync(id);
         
@@ -77,8 +77,8 @@ public class PayrollController : BaseApiController
             return NotFound($"Pay period with ID {id} not found");
         }
 
-        _logger.LogInformation("Payroll processed for period {PayPeriodId}: {RecordsProcessed} records", 
-            id, result.RecordsProcessed);
+        _logger.LogInformation("Payroll processed for period {PayPeriodId}: {ProcessedCount} records", 
+            id, result.ProcessedCount);
         
         return Ok(result);
     }
@@ -87,9 +87,9 @@ public class PayrollController : BaseApiController
     /// Approve payroll for a pay period
     /// </summary>
     [HttpPost("periods/{id}/approve")]
-    public async Task<IActionResult> ApprovePayroll(int id)
+    public async Task<IActionResult> ApprovePayroll(Guid id, [FromQuery] Guid approverId)
     {
-        var payPeriod = await _payrollService.ApprovePayrollAsync(id);
+        var payPeriod = await _payrollService.ApprovePayrollAsync(id, approverId);
         
         if (payPeriod == null)
         {
@@ -104,9 +104,9 @@ public class PayrollController : BaseApiController
     /// Get payroll record by ID
     /// </summary>
     [HttpGet("records/{id}")]
-    public async Task<IActionResult> GetPayrollRecord(int id)
+    public async Task<IActionResult> GetPayrollRecord(Guid id)
     {
-        var record = await _payrollService.GetPayrollRecordByIdAsync(id);
+        var record = await _payrollService.GetPayrollRecordAsync(id);
         
         if (record == null)
         {
@@ -120,7 +120,7 @@ public class PayrollController : BaseApiController
     /// Get payroll records for an employee
     /// </summary>
     [HttpGet("records/employee/{employeeId}")]
-    public async Task<IActionResult> GetEmployeeRecords(int employeeId)
+    public async Task<IActionResult> GetEmployeeRecords(Guid employeeId)
     {
         var records = await _payrollService.GetEmployeePayrollRecordsAsync(employeeId);
         return Ok(records);
@@ -130,7 +130,7 @@ public class PayrollController : BaseApiController
     /// Recalculate a payroll record
     /// </summary>
     [HttpPost("records/{id}/recalculate")]
-    public async Task<IActionResult> RecalculateRecord(int id)
+    public async Task<IActionResult> RecalculateRecord(Guid id)
     {
         var record = await _payrollService.RecalculatePayrollRecordAsync(id);
         

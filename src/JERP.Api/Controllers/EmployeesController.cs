@@ -38,7 +38,7 @@ public class EmployeesController : BaseApiController
     /// Get employee by ID
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var employee = await _employeeService.GetByIdAsync(id);
         
@@ -81,7 +81,7 @@ public class EmployeesController : BaseApiController
     /// Update an existing employee
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] EmployeeUpdateRequest request)
+    public async Task<IActionResult> Update(Guid id, [FromBody] EmployeeUpdateRequest request)
     {
         var employee = await _employeeService.UpdateAsync(id, request);
         
@@ -98,15 +98,10 @@ public class EmployeesController : BaseApiController
     /// Delete an employee
     /// </summary>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _employeeService.DeleteAsync(id);
+        await _employeeService.DeleteAsync(id);
         
-        if (!result)
-        {
-            return NotFound($"Employee with ID {id} not found");
-        }
-
         _logger.LogInformation("Employee deleted: {EmployeeId}", id);
         return NoContent();
     }
@@ -115,9 +110,9 @@ public class EmployeesController : BaseApiController
     /// Terminate an employee
     /// </summary>
     [HttpPost("{id}/terminate")]
-    public async Task<IActionResult> Terminate(int id, [FromBody] TerminateRequest request)
+    public async Task<IActionResult> Terminate(Guid id, [FromBody] TerminateRequest request)
     {
-        var employee = await _employeeService.TerminateAsync(id, request);
+        var employee = await _employeeService.TerminateAsync(id, request.TerminationDate, request.Reason);
         
         if (employee == null)
         {
@@ -126,15 +121,5 @@ public class EmployeesController : BaseApiController
 
         _logger.LogInformation("Employee terminated: {EmployeeId}", id);
         return Ok(employee);
-    }
-
-    /// <summary>
-    /// Get employees by department
-    /// </summary>
-    [HttpGet("department/{departmentId}")]
-    public async Task<IActionResult> GetByDepartment(int departmentId)
-    {
-        var employees = await _employeeService.GetByDepartmentAsync(departmentId);
-        return Ok(employees);
     }
 }
