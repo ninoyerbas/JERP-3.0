@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JERP.Compliance")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+18c373cf61c486979c3fcfb2ac249f60d3ebfac5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5a02e7e5588c38518977c92ad01341c7dffdda39")]
 [assembly: System.Reflection.AssemblyProductAttribute("JERP.Compliance")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JERP.Compliance")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
