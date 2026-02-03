@@ -142,7 +142,7 @@ app.UseMiddleware<AuditLoggingMiddleware>();
 
 app.MapControllers();
 
-// Run migrations and seed data on startup
+// Run migrations on startup
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -151,19 +151,11 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<JerpDbContext>();
         await context.Database.MigrateAsync();
         
-        // Initialize and seed if DbInitializer service is available
-        var dbInitializer = services.GetService<Infrastructure.Data.IDbInitializer>();
-        if (dbInitializer != null)
-        {
-            await dbInitializer.InitializeAsync();
-            await dbInitializer.SeedAsync();
-        }
-        
-        Log.Information("Database initialized and seeded successfully");
+        Log.Information("Database initialized successfully");
     }
     catch (Exception ex)
     {
-        Log.Error(ex, "An error occurred while migrating or seeding the database");
+        Log.Error(ex, "An error occurred while migrating the database");
         throw;
     }
 }
