@@ -1,8 +1,10 @@
 using System.Text.Json;
 using JERP.Core.Entities;
 using JERP.Infrastructure.Data.Configurations;
+using JERP.Infrastructure.Data.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Configuration;
 
 namespace JERP.Infrastructure.Data;
 
@@ -11,8 +13,19 @@ namespace JERP.Infrastructure.Data;
 /// </summary>
 public class JerpDbContext : DbContext
 {
+    private readonly IConfiguration? _configuration;
+    private readonly string _databaseProvider;
+
     public JerpDbContext(DbContextOptions<JerpDbContext> options) : base(options)
     {
+        _databaseProvider = "PostgreSQL"; // Default when configuration is not available
+    }
+
+    public JerpDbContext(DbContextOptions<JerpDbContext> options, IConfiguration configuration)
+        : base(options)
+    {
+        _configuration = configuration;
+        _databaseProvider = configuration["DatabaseSettings:Provider"] ?? "PostgreSQL";
     }
 
     // DbSets for all entities
@@ -38,6 +51,9 @@ public class JerpDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Apply provider-specific configurations
+        ApplyProviderSpecificConfigurations(modelBuilder);
+
         // Apply all entity configurations
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
@@ -53,6 +69,65 @@ public class JerpDbContext : DbContext
         modelBuilder.ApplyConfiguration(new DeductionConfiguration());
         modelBuilder.ApplyConfiguration(new ComplianceViolationConfiguration());
         modelBuilder.ApplyConfiguration(new AuditLogConfiguration());
+    }
+
+    /// <summary>
+    /// Applies provider-specific model configurations
+    /// </summary>
+    private void ApplyProviderSpecificConfigurations(ModelBuilder modelBuilder)
+    {
+        switch (_databaseProvider.ToUpper())
+        {
+            case "POSTGRESQL":
+                ConfigureForPostgreSQL(modelBuilder);
+                break;
+            case "MYSQL":
+                ConfigureForMySQL(modelBuilder);
+                break;
+            case "SQLSERVER":
+                ConfigureForSqlServer(modelBuilder);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Applies PostgreSQL-specific configurations
+    /// </summary>
+    private void ConfigureForPostgreSQL(ModelBuilder modelBuilder)
+    {
+        // PostgreSQL-specific: Use JSONB for JSON columns
+        // PostgreSQL handles UUIDs natively and efficiently
+    }
+
+    /// <summary>
+    /// Applies MySQL-specific configurations
+    /// </summary>
+    private void ConfigureForMySQL(ModelBuilder modelBuilder)
+    {
+        // MySQL-specific: Set character set and ensure max length for strings
+        foreach (var entity in modelBuilder.Model.GetEntityTypes())
+        {
+            foreach (var property in entity.GetProperties())
+            {
+                if (property.ClrType == typeof(string))
+                {
+                    property.SetIsUnicode(true);
+                    if (property.GetMaxLength() == null)
+                    {
+                        property.SetMaxLength(255);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Applies SQL Server-specific configurations
+    /// </summary>
+    private void ConfigureForSqlServer(ModelBuilder modelBuilder)
+    {
+        // SQL Server-specific: Use NVARCHAR for strings
+        // Could enable temporal tables here if needed
     }
 
     /// <summary>
