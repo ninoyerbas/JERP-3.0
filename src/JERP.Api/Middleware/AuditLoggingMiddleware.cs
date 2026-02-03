@@ -70,20 +70,24 @@ public class AuditLoggingMiddleware
         try
         {
             var userId = GetUserId(context);
+            if (userId == null)
+            {
+                return; // Don't log if user is not authenticated
+            }
+
             var entityInfo = ExtractEntityInfo(context.Request.Path);
 
             var auditLog = new AuditLog
             {
-                UserId = userId,
+                UserId = userId.Value,
                 Action = context.Request.Method,
                 EntityType = entityInfo.EntityType,
-                EntityId = entityInfo.EntityId,
+                EntityId = entityInfo.EntityId ?? Guid.Empty,
                 Timestamp = DateTime.UtcNow,
                 IpAddress = context.Connection.RemoteIpAddress?.ToString() ?? "Unknown",
                 UserAgent = context.Request.Headers["User-Agent"].ToString(),
                 OldValues = null, // Would need to capture before state
-                NewValues = null, // Would need to capture after state
-                Changes = $"{context.Request.Method} {context.Request.Path}"
+                NewValues = null  // Would need to capture after state
             };
 
             // Get the last audit log to create hash chain
@@ -91,8 +95,8 @@ public class AuditLoggingMiddleware
                 .OrderByDescending(a => a.Id)
                 .FirstOrDefaultAsync();
 
-            auditLog.PreviousHash = lastAuditLog?.Hash ?? string.Empty;
-            auditLog.Hash = CalculateHash(auditLog);
+            auditLog.PreviousHash = lastAuditLog?.CurrentHash ?? string.Empty;
+            auditLog.CurrentHash = CalculateHash(auditLog);
 
             dbContext.AuditLogs.Add(auditLog);
             await dbContext.SaveChangesAsync();
@@ -111,17 +115,17 @@ public class AuditLoggingMiddleware
         }
     }
 
-    private int? GetUserId(HttpContext context)
+    private Guid? GetUserId(HttpContext context)
     {
-        var userIdClaim = context.User.FindFirst("userId");
-        if (userIdClaim != null && int.TryParse(userIdClaim.Value, out var userId))
+        var userIdClaim = context.User.FindFirst("userId") ?? context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
         {
             return userId;
         }
         return null;
     }
 
-    private (string EntityType, string? EntityId) ExtractEntityInfo(PathString path)
+    private (string EntityType, Guid? EntityId) ExtractEntityInfo(PathString path)
     {
         var segments = path.Value?.Split('/', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
         
@@ -131,7 +135,7 @@ public class AuditLoggingMiddleware
         }
 
         var entityType = segments[2]; // After "api/v1/"
-        var entityId = segments.Length > 3 && int.TryParse(segments[3], out _) ? segments[3] : null;
+        var entityId = segments.Length > 3 && Guid.TryParse(segments[3], out var id) ? id : (Guid?)null;
 
         return (entityType, entityId);
     }
@@ -139,7 +143,7 @@ public class AuditLoggingMiddleware
     private string CalculateHash(AuditLog log)
     {
         var data = $"{log.UserId}|{log.Action}|{log.EntityType}|{log.EntityId}|" +
-                   $"{log.Timestamp:O}|{log.PreviousHash}|{log.Changes}";
+                   $"{log.Timestamp:O}|{log.PreviousHash}|{log.OldValues}|{log.NewValues}";
 
         using var sha256 = SHA256.Create();
         var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(data));
