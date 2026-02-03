@@ -1,0 +1,44 @@
+# Ignore build artifacts
+**/bin/
+**/obj/
+**/out/
+
+# Ignore Visual Studio files
+**/.vs/
+**/.vscode/
+
+# Ignore node_modules
+**/node_modules/
+
+# Ignore git
+**/.git/
+**/.gitignore
+
+# Ignore Docker files
+**/Dockerfile*
+**/docker-compose*
+**/.dockerignore
+
+# Ignore documentation
+**/*.md
+**/README*
+**/LICENSE*
+
+# Ignore test results
+**/TestResults/
+**/*.trx
+
+# Ignore logs
+**/logs/
+**/*.log
+
+# Ignore sensitive files
+**/*.pfx
+**/*.key
+**/appsettings.Development.json
+**/appsettings.Production.json
+
+# Ignore database files
+**/*.db
+**/*.db-shm
+**/*.db-wal

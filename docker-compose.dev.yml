@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/JERP.Api/Dockerfile
+      target: build
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=jerp_dev;Username=jerp_user;Password=DevPassword123!"
+      Jwt__SecretKey: "dev-secret-key-minimum-32-characters-long-for-testing-only"
+    ports:
+      - "5000:80"
+      - "5001:443"
+    volumes:
+      - ./src:/src
+      - ./logs:/app/logs
+    command: dotnet watch run --project /src/src/JERP.Api/JERP.Api.csproj
+
+  postgres:
+    environment:
+      POSTGRES_DB: jerp_dev
+      POSTGRES_PASSWORD: DevPassword123!
+    ports:
+      - "5432:5432"
