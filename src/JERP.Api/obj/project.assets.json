@@ -1545,7 +1545,7 @@
           "buildTransitive/netcoreapp3.1/_._": {}
         }
       },
-      "JERP.Application/1.0.0": {
+      "JERP.Application/2.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
@@ -4082,7 +4082,7 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "JERP.Application/1.0.0": {
+    "JERP.Application/2.0.0": {
       "type": "project",
       "path": "../JERP.Application/JERP.Application.csproj",
       "msbuildProject": "../JERP.Application/JERP.Application.csproj"
@@ -4106,7 +4106,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "FluentValidation.AspNetCore >= 11.3.0",
-      "JERP.Application >= 1.0.0",
+      "JERP.Application >= 2.0.0",
       "JERP.Compliance >= 1.0.0",
       "JERP.Core >= 2.0.0",
       "JERP.Infrastructure >= 2.0.0",
@@ -4119,15 +4119,15 @@
     ]
   },
   "packageFolders": {
-    "/home/runner/work/JERP-3.0/.codeql-scratch/dbs/csharp/working/packages": {}
+    "/home/runner/.nuget/packages/": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "restore": {
       "projectUniqueName": "/home/runner/work/JERP-3.0/JERP-3.0/src/JERP.Api/JERP.Api.csproj",
       "projectName": "JERP.Api",
       "projectPath": "/home/runner/work/JERP-3.0/JERP-3.0/src/JERP.Api/JERP.Api.csproj",
-      "packagesPath": "/home/runner/work/JERP-3.0/.codeql-scratch/dbs/csharp/working/packages",
+      "packagesPath": "/home/runner/.nuget/packages/",
       "outputPath": "/home/runner/work/JERP-3.0/JERP-3.0/src/JERP.Api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
@@ -4216,24 +4216,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Host.linux-x64",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.23, 8.0.23]"
-          },
-          {
-            "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.23, 8.0.23]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"

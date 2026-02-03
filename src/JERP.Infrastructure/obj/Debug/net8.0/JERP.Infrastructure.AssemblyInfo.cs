@@ -10,11 +10,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("JERP.Infrastructure")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("JERP Corporation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2024 JERP Corporation")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("2.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+872e35bc9b195e1169f5bc239efe65ef595acbda")]
-[assembly: System.Reflection.AssemblyProductAttribute("JERP.Infrastructure")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+200dce429901f39e76d7519a2f1ba42e8f73874b")]
+[assembly: System.Reflection.AssemblyProductAttribute("JERP 2.0")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JERP.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("2.0.0.0")]
 
