@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using QuestPDF.Infrastructure;
 using Serilog;
 using System.Text;
@@ -47,10 +48,37 @@ try
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
-    // Configure Database
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    // Configure Database with multi-provider support
+    var databaseProvider = builder.Configuration["DatabaseSettings:Provider"] ?? "PostgreSQL";
+    var useWindowsAuth = builder.Configuration.GetValue<bool>("DatabaseSettings:UseWindowsAuthentication");
+
+    var connectionString = databaseProvider.ToUpper() switch
+    {
+        "SQLSERVER" when useWindowsAuth => 
+            builder.Configuration.GetConnectionString("SqlServerWindowsAuth"),
+        _ => 
+            builder.Configuration.GetConnectionString(databaseProvider) 
+            ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    };
+
     builder.Services.AddDbContext<JerpDbContext>(options =>
-        options.UseNpgsql(connectionString));
+    {
+        switch (databaseProvider.ToUpper())
+        {
+            case "POSTGRESQL":
+                options.UseNpgsql(connectionString);
+                break;
+            case "MYSQL":
+                var serverVersion = ServerVersion.AutoDetect(connectionString);
+                options.UseMySql(connectionString, serverVersion);
+                break;
+            case "SQLSERVER":
+                options.UseSqlServer(connectionString);
+                break;
+            default:
+                throw new InvalidOperationException($"Unsupported database provider: {databaseProvider}");
+        }
+    });
 
     // Add Application Services
     builder.Services.AddApplicationServices();
@@ -93,9 +121,22 @@ try
         });
     });
 
-    // Add Health Checks
-    builder.Services.AddHealthChecks()
-        .AddNpgSql(connectionString!, name: "database");
+    // Add Health Checks based on provider
+    switch (databaseProvider.ToUpper())
+    {
+        case "POSTGRESQL":
+            builder.Services.AddHealthChecks()
+                .AddNpgSql(connectionString!, name: "database");
+            break;
+        case "MYSQL":
+            builder.Services.AddHealthChecks()
+                .AddMySql(connectionString!, name: "database");
+            break;
+        case "SQLSERVER":
+            builder.Services.AddHealthChecks()
+                .AddSqlServer(connectionString!, name: "database");
+            break;
+    }
 
     // Configure Swagger/OpenAPI
     builder.Services.AddEndpointsApiExplorer();
