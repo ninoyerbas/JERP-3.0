@@ -16,7 +16,6 @@ public class CaliforniaSeventhDayOvertimeRule : ComplianceRuleBase
     public override ViolationSeverity DefaultSeverity => ViolationSeverity.High;
 
     private const int ConsecutiveDaysThreshold = 7;
-    private const decimal SeventhDayOvertimeThreshold = 8.0m;
 
     public CaliforniaSeventhDayOvertimeRule(ILogger<CaliforniaSeventhDayOvertimeRule> logger) : base(logger)
     {
@@ -45,8 +44,8 @@ public class CaliforniaSeventhDayOvertimeRule : ComplianceRuleBase
         {
             // This is the 7th day - all hours should be at premium rates
             var hoursOn7thDay = timesheet.TotalHours;
-            decimal expectedOvertimeHours = Math.Min(hoursOn7thDay, SeventhDayOvertimeThreshold);
-            decimal expectedDoubleTimeHours = Math.Max(0, hoursOn7thDay - SeventhDayOvertimeThreshold);
+            decimal expectedOvertimeHours = Math.Min(hoursOn7thDay, ComplianceConstants.CaliforniaDailyOvertimeThreshold);
+            decimal expectedDoubleTimeHours = Math.Max(0, hoursOn7thDay - ComplianceConstants.CaliforniaDailyOvertimeThreshold);
 
             // Check if hours are properly classified
             var overtimeDiscrepancy = Math.Abs(timesheet.OvertimeHours - expectedOvertimeHours);

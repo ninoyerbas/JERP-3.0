@@ -15,11 +15,6 @@ public class CaliforniaDailyOvertimeRule : ComplianceRuleBase
     public override ViolationType ViolationType => ViolationType.LaborLaw;
     public override ViolationSeverity DefaultSeverity => ViolationSeverity.High;
 
-    private const decimal DailyOvertimeThreshold = 8.0m;
-    private const decimal DailyDoubleTimeThreshold = 12.0m;
-    private const decimal OvertimeRate = 1.5m;
-    private const decimal DoubleTimeRate = 2.0m;
-
     public CaliforniaDailyOvertimeRule(ILogger<CaliforniaDailyOvertimeRule> logger) : base(logger)
     {
     }
@@ -40,17 +35,17 @@ public class CaliforniaDailyOvertimeRule : ComplianceRuleBase
         decimal expectedOvertimeHours = 0;
         decimal expectedDoubleTimeHours = 0;
 
-        if (dailyHours > DailyDoubleTimeThreshold)
+        if (dailyHours > ComplianceConstants.CaliforniaDailyDoubleTimeThreshold)
         {
             // Hours over 12 are double time
-            expectedDoubleTimeHours = dailyHours - DailyDoubleTimeThreshold;
+            expectedDoubleTimeHours = dailyHours - ComplianceConstants.CaliforniaDailyDoubleTimeThreshold;
             // Hours 8-12 are overtime
-            expectedOvertimeHours = DailyDoubleTimeThreshold - DailyOvertimeThreshold;
+            expectedOvertimeHours = ComplianceConstants.CaliforniaDailyDoubleTimeThreshold - ComplianceConstants.CaliforniaDailyOvertimeThreshold;
         }
-        else if (dailyHours > DailyOvertimeThreshold)
+        else if (dailyHours > ComplianceConstants.CaliforniaDailyOvertimeThreshold)
         {
             // Hours 8+ are overtime
-            expectedOvertimeHours = dailyHours - DailyOvertimeThreshold;
+            expectedOvertimeHours = dailyHours - ComplianceConstants.CaliforniaDailyOvertimeThreshold;
         }
 
         // Check if overtime hours are correctly classified

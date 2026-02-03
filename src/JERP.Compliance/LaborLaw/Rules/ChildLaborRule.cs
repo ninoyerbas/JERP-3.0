@@ -15,7 +15,6 @@ public class ChildLaborRule : ComplianceRuleBase
     public override ViolationType ViolationType => ViolationType.LaborLaw;
     public override ViolationSeverity DefaultSeverity => ViolationSeverity.Critical;
 
-    private const int MinorAge = 18;
     private const decimal MaxDailyHoursForMinors = 8.0m;
     private const decimal MaxSchoolDayHours = 3.0m;
     private const decimal MaxWeeklyHoursSchoolWeek = 18.0m;
@@ -45,7 +44,7 @@ public class ChildLaborRule : ComplianceRuleBase
         }
 
         var age = CalculateAge(employee.DateOfBirth.Value, timesheet.WorkDate);
-        if (age >= MinorAge)
+        if (age >= ComplianceConstants.MinorAge)
         {
             return ComplianceResult.Compliant($"Employee {employee.Id} is not a minor (age {age})");
         }
@@ -171,7 +170,7 @@ public class ChildLaborRule : ComplianceRuleBase
     {
         // School year is typically Sept 1 - June 15
         var month = date.Month;
-        return month >= 9 || month <= 6;
+        return (month >= 9 && month <= 12) || (month >= 1 && month <= 6);
     }
 
     private bool IsSchoolDay(DateTime date)

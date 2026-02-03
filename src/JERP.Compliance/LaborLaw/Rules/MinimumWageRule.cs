@@ -15,9 +15,6 @@ public class MinimumWageRule : ComplianceRuleBase
     public override ViolationType ViolationType => ViolationType.LaborLaw;
     public override ViolationSeverity DefaultSeverity => ViolationSeverity.Critical;
 
-    private const decimal CaliforniaMinimumWage = 16.00m; // 2024 CA minimum wage
-    private const decimal FederalMinimumWage = 7.25m; // Federal minimum wage
-
     public MinimumWageRule(ILogger<MinimumWageRule> logger) : base(logger)
     {
     }
@@ -34,7 +31,7 @@ public class MinimumWageRule : ComplianceRuleBase
         var violations = new List<ComplianceViolation>();
 
         // Determine applicable minimum wage (use higher of state or federal)
-        var applicableMinimumWage = Math.Max(CaliforniaMinimumWage, FederalMinimumWage);
+        var applicableMinimumWage = Math.Max(ComplianceConstants.CaliforniaMinimumWage, ComplianceConstants.FederalMinimumWage);
 
         // Check hourly rate for non-exempt employees
         if (employee.HourlyRate.HasValue)
@@ -45,8 +42,8 @@ public class MinimumWageRule : ComplianceRuleBase
                 {
                     ActualHourlyRate = employee.HourlyRate.Value,
                     MinimumWageRequired = applicableMinimumWage,
-                    CaliforniaMinimumWage,
-                    FederalMinimumWage,
+                    CaliforniaMinimumWage = ComplianceConstants.CaliforniaMinimumWage,
+                    FederalMinimumWage = ComplianceConstants.FederalMinimumWage,
                     Shortfall = applicableMinimumWage - employee.HourlyRate.Value
                 };
 

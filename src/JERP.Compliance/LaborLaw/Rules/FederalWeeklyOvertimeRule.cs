@@ -15,9 +15,6 @@ public class FederalWeeklyOvertimeRule : ComplianceRuleBase
     public override ViolationType ViolationType => ViolationType.LaborLaw;
     public override ViolationSeverity DefaultSeverity => ViolationSeverity.High;
 
-    private const decimal WeeklyOvertimeThreshold = 40.0m;
-    private const decimal OvertimeRate = 1.5m;
-
     public FederalWeeklyOvertimeRule(ILogger<FederalWeeklyOvertimeRule> logger) : base(logger)
     {
     }
@@ -45,9 +42,9 @@ public class FederalWeeklyOvertimeRule : ComplianceRuleBase
 
         // Calculate expected federal overtime (only if weekly hours exceed 40)
         decimal expectedFederalOvertimeHours = 0;
-        if (totalWeeklyHours > WeeklyOvertimeThreshold)
+        if (totalWeeklyHours > ComplianceConstants.FederalWeeklyOvertimeThreshold)
         {
-            expectedFederalOvertimeHours = totalWeeklyHours - WeeklyOvertimeThreshold;
+            expectedFederalOvertimeHours = totalWeeklyHours - ComplianceConstants.FederalWeeklyOvertimeThreshold;
         }
 
         // Check if overtime is properly tracked
@@ -55,7 +52,7 @@ public class FederalWeeklyOvertimeRule : ComplianceRuleBase
         {
             var hourlyRate = employee.HourlyRate ?? 0;
             var unpaidOvertimeHours = expectedFederalOvertimeHours - totalWeeklyOvertimeHours;
-            var financialImpact = unpaidOvertimeHours * hourlyRate * (OvertimeRate - 1.0m);
+            var financialImpact = unpaidOvertimeHours * hourlyRate * (ComplianceConstants.OvertimeRate - 1.0m);
 
             var details = new
             {

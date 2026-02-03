@@ -67,7 +67,7 @@ public class ComplianceEngine : IComplianceEngine
         if (employee.DateOfBirth.HasValue)
         {
             var ageAtHire = CalculateAge(employee.DateOfBirth.Value, employee.HireDate);
-            if (ageAtHire < 14)
+            if (ageAtHire < ComplianceConstants.MinimumWorkingAge)
             {
                 var violation = new ComplianceViolation
                 {
@@ -78,7 +78,7 @@ public class ComplianceEngine : IComplianceEngine
                     EntityType = "Employee",
                     EntityId = employeeId,
                     RuleName = "Minimum Age Requirement",
-                    Description = $"Employee {employee.FirstName} {employee.LastName} was hired at age {ageAtHire}, below the federal minimum working age of 14.",
+                    Description = $"Employee {employee.FirstName} {employee.LastName} was hired at age {ageAtHire}, below the federal minimum working age of {ComplianceConstants.MinimumWorkingAge}.",
                     DetectedAt = DateTime.UtcNow
                 };
                 allViolations.Add(violation);
@@ -169,7 +169,7 @@ public class ComplianceEngine : IComplianceEngine
         if (timesheet.Employee.DateOfBirth.HasValue)
         {
             var age = CalculateAge(timesheet.Employee.DateOfBirth.Value, timesheet.WorkDate);
-            if (age < 18)
+            if (age < ComplianceConstants.MinorAge)
             {
                 var childLaborRule = _serviceProvider.GetRequiredService<ChildLaborRule>();
                 var childLaborResult = await childLaborRule.EvaluateAsync((timesheet.Employee, timesheet));
@@ -219,7 +219,7 @@ public class ComplianceEngine : IComplianceEngine
         if (payrollRecord.Employee.HourlyRate.HasValue && payrollRecord.RegularHours > 0)
         {
             var effectiveRate = payrollRecord.RegularPay / payrollRecord.RegularHours;
-            var minimumWage = 16.00m; // California minimum wage 2024
+            var minimumWage = ComplianceConstants.CaliforniaMinimumWage;
 
             if (effectiveRate < minimumWage)
             {
@@ -243,7 +243,7 @@ public class ComplianceEngine : IComplianceEngine
         // Validate overtime pay calculations
         if (payrollRecord.OvertimeHours > 0)
         {
-            var expectedOvertimePay = payrollRecord.OvertimeHours * (payrollRecord.Employee.HourlyRate ?? 0) * 1.5m;
+            var expectedOvertimePay = payrollRecord.OvertimeHours * (payrollRecord.Employee.HourlyRate ?? 0) * ComplianceConstants.OvertimeRate;
             var overtimeDiscrepancy = Math.Abs(payrollRecord.OvertimePay - expectedOvertimePay);
 
             if (overtimeDiscrepancy > 0.01m)
@@ -266,8 +266,10 @@ public class ComplianceEngine : IComplianceEngine
         }
 
         // Validate tax calculations (basic validation)
-        var expectedSocialSecurity = Math.Min(payrollRecord.GrossPay * 0.062m, 10453.20m); // 2024 limit
-        var expectedMedicare = payrollRecord.GrossPay * 0.0145m;
+        // Note: Social Security wage base for 2024 is $168,600 annually
+        // This is a simplified check - actual per-period limit varies by pay frequency
+        var expectedSocialSecurity = Math.Min(payrollRecord.GrossPay * ComplianceConstants.SocialSecurityRate, 10453.20m); // Bi-weekly limit approximation
+        var expectedMedicare = payrollRecord.GrossPay * ComplianceConstants.MedicareRate;
 
         if (Math.Abs(payrollRecord.SocialSecurityTax - expectedSocialSecurity) > 0.50m)
         {
@@ -287,7 +289,8 @@ public class ComplianceEngine : IComplianceEngine
         }
 
         // Check deduction limits (cannot exceed certain percentage of gross pay)
-        var maxDeductionPercent = 0.25m; // 25% max deduction limit
+        // Note: This limit may vary by jurisdiction and deduction type
+        var maxDeductionPercent = ComplianceConstants.MaxDeductionPercent;
         var totalDeductionPercent = payrollRecord.GrossPay > 0 
             ? payrollRecord.TotalDeductions / payrollRecord.GrossPay 
             : 0;
