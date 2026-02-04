@@ -11,6 +11,7 @@
  */
 
 using JERP.Application.DTOs.Employees;
+using JERP.Application.Services.Security;
 using JERP.Compliance.Services;
 using JERP.Core.Entities;
 using JERP.Core.Enums;
@@ -27,15 +28,18 @@ public class EmployeeService : IEmployeeService
 {
     private readonly JerpDbContext _context;
     private readonly IComplianceEngine _complianceEngine;
+    private readonly IAuditLogService _auditLogService;
     private readonly ILogger<EmployeeService> _logger;
 
     public EmployeeService(
         JerpDbContext context,
         IComplianceEngine complianceEngine,
+        IAuditLogService auditLogService,
         ILogger<EmployeeService> logger)
     {
         _context = context;
         _complianceEngine = complianceEngine;
+        _auditLogService = auditLogService;
         _logger = logger;
     }
 
@@ -154,6 +158,25 @@ public class EmployeeService : IEmployeeService
 
         _logger.LogInformation("Employee created successfully: {EmployeeNumber}", request.EmployeeNumber);
 
+        // Audit log the employee creation
+        try
+        {
+            await _auditLogService.LogAction(
+                employee.CompanyId,
+                Guid.Empty, // TODO: Get from current user context
+                "system@jerp.io", // TODO: Get from current user context
+                "System", // TODO: Get from current user context
+                "employee_created",
+                $"Employee:{employee.Id}",
+                $"Created employee {employee.FirstName} {employee.LastName} (#{employee.EmployeeNumber})",
+                null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create audit log for employee creation");
+            // Don't throw - audit logging failure should not break employee creation
+        }
+
         return MapToDto(employee);
     }
 
@@ -202,6 +225,25 @@ public class EmployeeService : IEmployeeService
         }
 
         _logger.LogInformation("Employee updated successfully: {EmployeeId}", id);
+
+        // Audit log the employee update
+        try
+        {
+            await _auditLogService.LogAction(
+                employee.CompanyId,
+                Guid.Empty, // TODO: Get from current user context
+                "system@jerp.io", // TODO: Get from current user context
+                "System", // TODO: Get from current user context
+                "employee_updated",
+                $"Employee:{employee.Id}",
+                $"Updated employee {employee.FirstName} {employee.LastName} (#{employee.EmployeeNumber})",
+                null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create audit log for employee update");
+            // Don't throw - audit logging failure should not break employee update
+        }
 
         return MapToDto(employee);
     }

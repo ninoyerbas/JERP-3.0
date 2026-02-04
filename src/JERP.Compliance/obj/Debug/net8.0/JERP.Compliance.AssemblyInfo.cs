@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2024 JERP Corporation")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("2.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+95f490ebd21852024af3bbc08b877bccf9b619eb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4a904395be641c5e69c2a7af23e6321cf0dcb9fa")]
 [assembly: System.Reflection.AssemblyProductAttribute("JERP 2.0")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JERP.Compliance")]
 [assembly: System.Reflection.AssemblyVersionAttribute("2.0.0.0")]
