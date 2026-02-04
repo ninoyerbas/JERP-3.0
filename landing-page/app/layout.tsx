@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'JERP 3.0 - Planilla de Pagos Inteligente para PYMEs',
@@ -19,7 +20,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
