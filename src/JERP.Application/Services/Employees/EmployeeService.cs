@@ -11,6 +11,7 @@
  */
 
 using JERP.Application.DTOs.Employees;
+using JERP.Application.Services.AuditLog;
 using JERP.Compliance.Services;
 using JERP.Core.Entities;
 using JERP.Core.Enums;
@@ -27,15 +28,18 @@ public class EmployeeService : IEmployeeService
 {
     private readonly JerpDbContext _context;
     private readonly IComplianceEngine _complianceEngine;
+    private readonly IAuditLogService _auditLogService;
     private readonly ILogger<EmployeeService> _logger;
 
     public EmployeeService(
         JerpDbContext context,
         IComplianceEngine complianceEngine,
+        IAuditLogService auditLogService,
         ILogger<EmployeeService> logger)
     {
         _context = context;
         _complianceEngine = complianceEngine;
+        _auditLogService = auditLogService;
         _logger = logger;
     }
 
@@ -144,6 +148,16 @@ public class EmployeeService : IEmployeeService
         _context.Employees.Add(employee);
         await _context.SaveChangesAsync();
 
+        // Log to audit chain
+        await _auditLogService.LogActionAsync(
+            companyId: employee.CompanyId,
+            userId: Guid.Empty, // TODO: Get from current user context
+            userEmail: "system@jerp.io", // TODO: Get from current user context
+            action: "employee_created",
+            resource: $"Employee {employee.EmployeeNumber}",
+            details: $"Created employee: {employee.FirstName} {employee.LastName}, Classification: {employee.Classification}",
+            ipAddress: "server");
+
         // Run compliance checks
         var violations = await _complianceEngine.EvaluateEmployeeAsync(employee.Id);
         if (violations.Any())
@@ -192,6 +206,16 @@ public class EmployeeService : IEmployeeService
         employee.PayFrequency = request.PayFrequency;
 
         await _context.SaveChangesAsync();
+
+        // Log to audit chain
+        await _auditLogService.LogActionAsync(
+            companyId: employee.CompanyId,
+            userId: Guid.Empty, // TODO: Get from current user context
+            userEmail: "system@jerp.io", // TODO: Get from current user context
+            action: "employee_updated",
+            resource: $"Employee {employee.EmployeeNumber}",
+            details: $"Updated employee: {employee.FirstName} {employee.LastName}",
+            ipAddress: "server");
 
         // Run compliance checks
         var violations = await _complianceEngine.EvaluateEmployeeAsync(employee.Id);

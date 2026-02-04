@@ -11,6 +11,7 @@
  */
 
 using JERP.Application.DTOs.Payroll;
+using JERP.Application.Services.AuditLog;
 using JERP.Application.Services.Payroll.Tax;
 using JERP.Compliance.Services;
 using JERP.Core.Entities;
@@ -29,17 +30,20 @@ public class PayrollService : IPayrollService
     private readonly JerpDbContext _context;
     private readonly ITaxCalculationService _taxCalculationService;
     private readonly IComplianceEngine _complianceEngine;
+    private readonly IAuditLogService _auditLogService;
     private readonly ILogger<PayrollService> _logger;
 
     public PayrollService(
         JerpDbContext context,
         ITaxCalculationService taxCalculationService,
         IComplianceEngine complianceEngine,
+        IAuditLogService auditLogService,
         ILogger<PayrollService> logger)
     {
         _context = context;
         _taxCalculationService = taxCalculationService;
         _complianceEngine = complianceEngine;
+        _auditLogService = auditLogService;
         _logger = logger;
     }
 
@@ -170,11 +174,33 @@ public class PayrollService : IPayrollService
             throw new InvalidOperationException("Only calculated payroll can be approved");
         }
 
+        // Get employee count and total amount for audit log
+        var payrollRecords = await _context.PayrollRecords
+            .Where(r => r.PayPeriodId == payPeriodId && !r.IsDeleted)
+            .ToListAsync();
+
+        var employeeCount = payrollRecords.Count;
+        var totalAmount = payrollRecords.Sum(r => r.NetPay);
+
         payPeriod.Status = PayrollStatus.Approved;
         payPeriod.ApprovedAt = DateTime.UtcNow;
         payPeriod.ApprovedById = approverId;
 
         await _context.SaveChangesAsync();
+
+        // Get approver information
+        var approver = await _context.Users.FirstOrDefaultAsync(u => u.Id == approverId);
+        var approverEmail = approver?.Email ?? "unknown@jerp.io";
+
+        // Log to audit chain
+        await _auditLogService.LogActionAsync(
+            companyId: payPeriod.CompanyId,
+            userId: approverId,
+            userEmail: approverEmail,
+            action: "payroll_approved",
+            resource: $"Payroll Period {payPeriod.StartDate:yyyy-MM-dd} to {payPeriod.EndDate:yyyy-MM-dd}",
+            details: $"Approved payroll for {employeeCount} employees, total amount ${totalAmount:N2}",
+            ipAddress: "server");
 
         _logger.LogInformation("Payroll approved: {PayPeriodId}", payPeriodId);
 
