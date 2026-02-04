@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JERP.Infrastructure.Migrations
 {
     [DbContext(typeof(JerpDbContext))]
-    [Migration("20260204161908_InitialCreate")]
+    [Migration("20260204162252_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -72,11 +72,11 @@ namespace JERP.Infrastructure.Migrations
 
                     b.Property<string>("NewValues")
                         .HasMaxLength(256)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OldValues")
                         .HasMaxLength(256)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PreviousHash")
                         .HasMaxLength(64)
@@ -208,7 +208,7 @@ namespace JERP.Infrastructure.Migrations
 
                     b.Property<string>("Details")
                         .HasMaxLength(256)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DetectedAt")
                         .HasColumnType("datetime2");

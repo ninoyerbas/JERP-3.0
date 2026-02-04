@@ -69,11 +69,11 @@ namespace JERP.Infrastructure.Migrations
 
                     b.Property<string>("NewValues")
                         .HasMaxLength(256)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OldValues")
                         .HasMaxLength(256)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PreviousHash")
                         .HasMaxLength(64)
@@ -205,7 +205,7 @@ namespace JERP.Infrastructure.Migrations
 
                     b.Property<string>("Details")
                         .HasMaxLength(256)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("DetectedAt")
                         .HasColumnType("datetime2");
