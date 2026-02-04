@@ -210,6 +210,7 @@ export default function AdminPortal() {
 
   const handleDeleteUser = (user: any) => {
     console.log('Delete user:', user);
+    // TODO: Replace with custom confirmation modal for better UX
     if (confirm(`Delete user ${user.name}?`)) {
       alert('User deleted (mock)');
     }
