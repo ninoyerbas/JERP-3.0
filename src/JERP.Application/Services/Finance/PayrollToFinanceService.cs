@@ -10,6 +10,7 @@
  * For licensing inquiries: licensing@jerp.io
  */
 
+using JERP.Application.Services.Security;
 using JERP.Core.Entities.Finance;
 using JERP.Core.Enums;
 using JERP.Infrastructure.Data;
@@ -24,13 +25,16 @@ namespace JERP.Application.Services.Finance;
 public class PayrollToFinanceService : IPayrollToFinanceService
 {
     private readonly JerpDbContext _context;
+    private readonly IAuditLogService _auditLogService;
     private readonly ILogger<PayrollToFinanceService> _logger;
 
     public PayrollToFinanceService(
         JerpDbContext context,
+        IAuditLogService auditLogService,
         ILogger<PayrollToFinanceService> logger)
     {
         _context = context;
+        _auditLogService = auditLogService;
         _logger = logger;
     }
 
@@ -182,6 +186,25 @@ public class PayrollToFinanceService : IPayrollToFinanceService
 
         _logger.LogInformation("Posted payroll record {PayrollRecordId} to GL as journal entry {JournalEntryId}",
             payrollRecordId, journalEntry.Id);
+
+        // Audit log the GL posting
+        try
+        {
+            await _auditLogService.LogAction(
+                companyId,
+                Guid.Empty, // TODO: Get from current user context
+                "system@jerp.io", // TODO: Get from current user context
+                "System", // TODO: Get from current user context
+                "gl_entry_posted",
+                $"JournalEntry:{journalEntry.Id}",
+                $"Posted payroll GL entries for {payrollRecord.Employee.FirstName} {payrollRecord.Employee.LastName}. Journal Entry #{journalEntry.JournalEntryNumber}. Total: ${journalEntry.TotalDebit:N2}",
+                null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create audit log for GL posting");
+            // Don't throw - audit logging failure should not break GL posting
+        }
 
         return journalEntry.Id;
     }

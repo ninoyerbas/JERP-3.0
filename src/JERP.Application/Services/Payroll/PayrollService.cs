@@ -12,6 +12,7 @@
 
 using JERP.Application.DTOs.Payroll;
 using JERP.Application.Services.Payroll.Tax;
+using JERP.Application.Services.Security;
 using JERP.Compliance.Services;
 using JERP.Core.Entities;
 using JERP.Core.Enums;
@@ -29,17 +30,20 @@ public class PayrollService : IPayrollService
     private readonly JerpDbContext _context;
     private readonly ITaxCalculationService _taxCalculationService;
     private readonly IComplianceEngine _complianceEngine;
+    private readonly IAuditLogService _auditLogService;
     private readonly ILogger<PayrollService> _logger;
 
     public PayrollService(
         JerpDbContext context,
         ITaxCalculationService taxCalculationService,
         IComplianceEngine complianceEngine,
+        IAuditLogService auditLogService,
         ILogger<PayrollService> logger)
     {
         _context = context;
         _taxCalculationService = taxCalculationService;
         _complianceEngine = complianceEngine;
+        _auditLogService = auditLogService;
         _logger = logger;
     }
 
@@ -149,6 +153,25 @@ public class PayrollService : IPayrollService
         _logger.LogInformation("Payroll processing completed: {ProcessedCount} employees, Gross: {Gross}, Net: {Net}",
             result.ProcessedCount, result.TotalGrossPay, result.TotalNetPay);
 
+        // Audit log the payroll processing
+        try
+        {
+            await _auditLogService.LogAction(
+                payPeriod.CompanyId,
+                Guid.Empty, // TODO: Get from current user context
+                "system@jerp.io", // TODO: Get from current user context
+                "System", // TODO: Get from current user context
+                "payroll_processed",
+                $"PayPeriod:{payPeriodId}",
+                $"Processed {result.ProcessedCount} employee records. Gross: ${result.TotalGrossPay:N2}, Net: ${result.TotalNetPay:N2}",
+                null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create audit log for payroll processing");
+            // Don't throw - audit logging failure should not break payroll processing
+        }
+
         return result;
     }
 
@@ -177,6 +200,26 @@ public class PayrollService : IPayrollService
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Payroll approved: {PayPeriodId}", payPeriodId);
+
+        // Audit log the payroll approval
+        try
+        {
+            var approver = await _context.Users.FindAsync(approverId);
+            await _auditLogService.LogAction(
+                payPeriod.CompanyId,
+                approverId,
+                approver?.Email ?? "unknown@jerp.io",
+                approver != null ? $"{approver.FirstName} {approver.LastName}" : "Unknown",
+                "payroll_approved",
+                $"PayPeriod:{payPeriodId}",
+                $"Approved payroll for period {payPeriod.StartDate:yyyy-MM-dd} to {payPeriod.EndDate:yyyy-MM-dd}. Total Net Pay: ${payPeriod.TotalNetPay:N2}",
+                null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create audit log for payroll approval");
+            // Don't throw - audit logging failure should not break payroll approval
+        }
 
         return MapPayPeriodToDto(payPeriod);
     }
