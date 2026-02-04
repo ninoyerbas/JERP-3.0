@@ -16,6 +16,8 @@ import { mockCustomers } from '@/lib/finance/mock-data';
 import { Customer } from '@/lib/finance/types';
 import { formatCurrency, formatDate } from '@/lib/finance/utils';
 
+const LICENSE_EXPIRY_WARNING_DAYS = 90;
+
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -34,7 +36,7 @@ export default function CustomersPage() {
     const expiry = new Date(expiryDate);
     const now = new Date();
     const daysUntilExpiry = Math.floor((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    return daysUntilExpiry <= 90 && daysUntilExpiry >= 0;
+    return daysUntilExpiry <= LICENSE_EXPIRY_WARNING_DAYS && daysUntilExpiry >= 0;
   };
   
   const isLicenseExpired = (expiryDate: string) => {
