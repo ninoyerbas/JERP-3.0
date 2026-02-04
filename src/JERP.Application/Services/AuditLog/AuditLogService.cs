@@ -36,6 +36,9 @@ public class AuditLogService : IAuditLogService
 
     /// <summary>
     /// Logs an action to the audit trail with hash-chain integrity
+    /// NOTE: This method uses database-level unique constraint on (CompanyId, SequenceNumber)
+    /// to prevent race conditions. If concurrent requests try to insert the same sequence number,
+    /// the database will reject the duplicate and throw an exception.
     /// </summary>
     public async Task<Core.Entities.AuditLog> LogActionAsync(
         Guid companyId,
@@ -47,6 +50,7 @@ public class AuditLogService : IAuditLogService
         string ipAddress)
     {
         // Get the last audit entry for this company to continue the chain
+        // Race condition is mitigated by unique constraint on (CompanyId, SequenceNumber) in DB
         var lastEntry = await _context.AuditLogs
             .Where(al => al.CompanyId == companyId)
             .OrderByDescending(al => al.SequenceNumber)
@@ -72,8 +76,17 @@ public class AuditLogService : IAuditLogService
         // Calculate the hash for this entry
         entry.CurrentHash = CalculateHash(entry);
 
-        await _context.AuditLogs.AddAsync(entry);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.AuditLogs.AddAsync(entry);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (ex.InnerException?.Message?.Contains("IX_AuditLogs_CompanyId_SequenceNumber") == true)
+        {
+            // Retry if there was a race condition
+            _logger.LogWarning("Sequence number collision detected for CompanyId={CompanyId}, retrying...", companyId);
+            return await LogActionAsync(companyId, userId, userEmail, action, resource, details, ipAddress);
+        }
 
         _logger.LogInformation(
             "Audit log entry created: CompanyId={CompanyId}, Seq={Seq}, Action={Action}, User={UserEmail}",
@@ -219,13 +232,25 @@ public class AuditLogService : IAuditLogService
     }
 
     /// <summary>
-    /// Escapes special characters for CSV format
+    /// Escapes special characters for CSV format and prevents CSV injection
     /// </summary>
     private string EscapeCsv(string value)
     {
         if (string.IsNullOrEmpty(value))
             return string.Empty;
 
+        // Prevent CSV injection by sanitizing formula characters
+        if (value.Length > 0)
+        {
+            var firstChar = value[0];
+            if (firstChar == '=' || firstChar == '+' || firstChar == '-' || firstChar == '@' || firstChar == '\t' || firstChar == '\r')
+            {
+                // Prepend with single quote to prevent formula interpretation
+                value = "'" + value;
+            }
+        }
+
+        // Escape double quotes by doubling them
         return value.Replace("\"", "\"\"");
     }
 }

@@ -50,9 +50,11 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
             .HasMaxLength(500);
 
         builder.Property(al => al.Details)
+            .IsRequired()
             .HasMaxLength(2000);
 
         builder.Property(al => al.IpAddress)
+            .IsRequired()
             .HasMaxLength(50);
 
         builder.Property(al => al.PreviousHash)
