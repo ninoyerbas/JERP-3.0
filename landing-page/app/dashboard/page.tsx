@@ -1,13 +1,11 @@
-/*
- * JERP (Joint Enterprise Resource Planning) - Payroll Dashboard
+/**
+ * JERP 3.0 - Payroll & ERP System
+ * Copyright (c) 2026 ninoyerbas. All Rights Reserved.
  * 
- * Copyright (c) 2025 JERP Development Team
+ * PROPRIETARY AND CONFIDENTIAL
  * 
- * This software is licensed under the MIT License.
- * See the LICENSE file in the project root for full license information.
- * 
- * Created: 2025
- * Purpose: Main dashboard interface for payroll management system
+ * Unauthorized copying, modification, distribution, or use is strictly prohibited.
+ * For licensing inquiries: licensing@jerp.io
  */
 
 'use client';

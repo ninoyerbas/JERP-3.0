@@ -130,7 +130,7 @@ export default function SignupPage() {
   const handleComplete = () => {
     // Store user data and redirect
     localStorage.setItem("jerp-user", JSON.stringify({
-      id: Math.random().toString(36).substr(2, 9),
+      id: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       email: data.email,
       name: `${data.firstName} ${data.lastName}`,
       role: "user",

@@ -8,6 +8,20 @@
  * For licensing inquiries: licensing@jerp.io
  */
 
+/**
+ * ⚠️ WARNING: DEVELOPMENT ONLY - DO NOT USE IN PRODUCTION
+ * 
+ * This file contains mock authentication for development and demonstration purposes only.
+ * Passwords are stored in plain text and authentication bypasses all security measures.
+ * 
+ * Before production deployment:
+ * - Replace with actual API authentication
+ * - Implement proper password hashing (bcrypt, argon2)
+ * - Add rate limiting and brute force protection
+ * - Use secure session management
+ * - Implement CSRF protection
+ */
+
 // Mock user data for development
 const MOCK_USERS = [
   {
