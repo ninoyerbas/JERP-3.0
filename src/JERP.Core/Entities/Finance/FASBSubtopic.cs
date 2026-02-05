@@ -40,6 +40,13 @@ public class FASBSubtopic : BaseEntity
     public string SubtopicName { get; set; } = string.Empty;
     
     /// <summary>
+    /// Full FASB reference (e.g., "ASC 606-10")
+    /// </summary>
+    [Required]
+    [MaxLength(20)]
+    public string FullReference { get; set; } = string.Empty;
+    
+    /// <summary>
     /// Detailed description of the subtopic
     /// </summary>
     [MaxLength(1000)]

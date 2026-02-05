@@ -94,7 +94,7 @@ public static class FASBDataSeeder
         AddTopic(topics, subtopics, "310", "Receivables", FASBCategory.Assets, 
             new[] { "10", "20", "30" });
         AddTopic(topics, subtopics, "320", "Investments—Debt Securities", FASBCategory.Assets, 
-            new[] { "10" }, isSuperseded: true);
+            new[] { "10" }, isSuperseded: true, supersededBy: "ASC 321 and ASC 326");
         AddTopic(topics, subtopics, "321", "Investments—Equity Securities", FASBCategory.Assets, 
             new[] { "10" });
         AddTopic(topics, subtopics, "323", "Investments—Equity Method and Joint Ventures", FASBCategory.Assets, 
@@ -122,7 +122,7 @@ public static class FASBDataSeeder
         AddTopic(topics, subtopics, "420", "Exit or Disposal Cost Obligations", FASBCategory.Liabilities, 
             new[] { "10" });
         AddTopic(topics, subtopics, "430", "Deferred Revenue", FASBCategory.Liabilities, 
-            new[] { "10" }, isSuperseded: true);
+            new[] { "10" }, isSuperseded: true, supersededBy: "ASC 606");
         AddTopic(topics, subtopics, "440", "Commitments", FASBCategory.Liabilities, 
             new[] { "10" });
         AddTopic(topics, subtopics, "450", "Contingencies", FASBCategory.Liabilities, 
@@ -144,7 +144,7 @@ public static class FASBDataSeeder
     private static void SeedRevenueTopics(List<FASBTopic> topics, List<FASBSubtopic> subtopics)
     {
         AddTopic(topics, subtopics, "605", "Revenue Recognition", FASBCategory.Revenue, 
-            new[] { "10", "15", "20", "25", "28", "30", "35", "40", "45", "50" }, isSuperseded: true);
+            new[] { "10", "15", "20", "25", "28", "30", "35", "40", "45", "50" }, isSuperseded: true, supersededBy: "ASC 606");
         AddTopic(topics, subtopics, "606", "Revenue from Contracts with Customers", FASBCategory.Revenue, 
             new[] { "10", "20" });
         AddTopic(topics, subtopics, "610", "Other Income", FASBCategory.Revenue, 
@@ -190,7 +190,7 @@ public static class FASBDataSeeder
         AddTopic(topics, subtopics, "835", "Interest", FASBCategory.BroadTransactions, 
             new[] { "10", "20", "30" });
         AddTopic(topics, subtopics, "840", "Leases", FASBCategory.BroadTransactions, 
-            new[] { "10", "20", "30", "40" }, isSuperseded: true);
+            new[] { "10", "20", "30", "40" }, isSuperseded: true, supersededBy: "ASC 842");
         AddTopic(topics, subtopics, "842", "Leases", FASBCategory.BroadTransactions, 
             new[] { "10", "20", "30", "40", "50" });
         AddTopic(topics, subtopics, "845", "Nonmonetary Transactions", FASBCategory.BroadTransactions, 
@@ -260,7 +260,7 @@ public static class FASBDataSeeder
         AddTopic(topics, subtopics, "974", "Real Estate—Real Estate Investment Trusts", FASBCategory.Industry, 
             new[] { "10", "205", "210", "220", "235", "310", "320", "323", "325", "360", "470", "605", "715", "810", "815" });
         AddTopic(topics, subtopics, "976", "Real Estate—Retail Land", FASBCategory.Industry, 
-            new[] { "10", "605" }, isSuperseded: true);
+            new[] { "10", "605" }, isSuperseded: true, supersededBy: "ASC 606");
         AddTopic(topics, subtopics, "978", "Real Estate—Time-Sharing Activities", FASBCategory.Industry, 
             new[] { "10", "310", "360", "605" });
         AddTopic(topics, subtopics, "980", "Regulated Operations", FASBCategory.Industry, 
@@ -271,7 +271,7 @@ public static class FASBDataSeeder
 
     private static void AddTopic(List<FASBTopic> topics, List<FASBSubtopic> subtopics, 
         string topicCode, string topicName, FASBCategory category, string[] subtopicCodes, 
-        bool isSuperseded = false)
+        bool isSuperseded = false, string? supersededBy = null)
     {
         var topicId = Guid.NewGuid();
         var now = DateTime.UtcNow;
@@ -284,6 +284,7 @@ public static class FASBDataSeeder
             Category = category,
             Description = null,
             IsSuperseded = isSuperseded,
+            SupersededBy = supersededBy,
             CreatedAt = now,
             UpdatedAt = now,
             IsDeleted = false
@@ -297,6 +298,7 @@ public static class FASBDataSeeder
                 FASBTopicId = topicId,
                 SubtopicCode = subtopicCode,
                 SubtopicName = GetSubtopicName(subtopicCode),
+                FullReference = $"ASC {topicCode}-{subtopicCode}",
                 Description = null,
                 IsRepealed = false,
                 CreatedAt = now,

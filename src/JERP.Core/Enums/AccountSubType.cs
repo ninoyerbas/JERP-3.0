@@ -14,7 +14,9 @@ namespace JERP.Core.Enums;
 
 /// <summary>
 /// Represents the sub-type classification for accounts
+/// DEPRECATED: This enum is obsolete and replaced by FASB ASC structure
 /// </summary>
+[Obsolete("AccountSubType is deprecated. Use FASB Topic/Subtopic structure instead.")]
 public enum AccountSubType
 {
     // Asset sub-types

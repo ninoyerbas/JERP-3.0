@@ -20,7 +20,9 @@ namespace JERP.Application.Services.Finance;
 
 /// <summary>
 /// Service for seeding the cannabis-specific chart of accounts
+/// DEPRECATED: This service uses the old AccountSubType structure which has been replaced by FASB ASC
 /// </summary>
+[Obsolete("ChartOfAccountsSeedService is deprecated. The old AccountSubType-based COA has been replaced with FASB ASC structure. This service will be removed in a future version.")]
 public class ChartOfAccountsSeedService
 {
     private readonly JerpDbContext _context;
@@ -36,9 +38,18 @@ public class ChartOfAccountsSeedService
 
     /// <summary>
     /// Seeds the standard chart of accounts for a new company
+    /// DEPRECATED: Use FASB-based account creation instead
     /// </summary>
+    [Obsolete("This method uses deprecated AccountSubType. Accounts must now be created with FASB Topic/Subtopic references.")]
     public async Task SeedChartOfAccountsAsync(Guid companyId)
     {
+        throw new NotSupportedException(
+            "ChartOfAccountsSeedService is deprecated. " +
+            "The AccountSubType-based chart of accounts has been replaced with FASB ASC structure. " +
+            "All new accounts must include valid FASBTopicId, FASBSubtopicId, and FASBReference. " +
+            "Please use the FASB-based account creation methods instead.");
+        
+        /* DEPRECATED CODE - Kept for reference only
         // Check if accounts already exist
         var existingAccounts = await _context.Accounts
             .Where(a => a.CompanyId == companyId)
@@ -347,5 +358,6 @@ public class ChartOfAccountsSeedService
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Seeded {Count} accounts for company {CompanyId}", accounts.Count, companyId);
+        */
     }
 }
