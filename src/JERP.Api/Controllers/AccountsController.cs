@@ -45,6 +45,8 @@ public class AccountsController : BaseApiController
     {
         var accounts = await _context.Accounts
             .Where(a => a.CompanyId == companyId)
+            .Include(a => a.FASBTopic)
+            .Include(a => a.FASBSubtopic)
             .OrderBy(a => a.AccountNumber)
             .Select(a => new AccountDto
             {
@@ -60,6 +62,11 @@ public class AccountsController : BaseApiController
                 IsCOGS = a.IsCOGS,
                 IsNonDeductible = a.IsNonDeductible,
                 TaxCategory = a.TaxCategory,
+                FASBTopicId = a.FASBTopicId,
+                FASBSubtopicId = a.FASBSubtopicId,
+                FASBReference = a.FASBReference,
+                FASBTopicName = a.FASBTopic != null ? a.FASBTopic.TopicName : null,
+                FASBSubtopicName = a.FASBSubtopic != null ? a.FASBSubtopic.SubtopicName : null,
                 CreatedAt = a.CreatedAt,
                 UpdatedAt = a.UpdatedAt
             })
@@ -76,6 +83,8 @@ public class AccountsController : BaseApiController
     {
         var account = await _context.Accounts
             .Where(a => a.Id == id)
+            .Include(a => a.FASBTopic)
+            .Include(a => a.FASBSubtopic)
             .Select(a => new AccountDto
             {
                 Id = a.Id,
@@ -90,6 +99,11 @@ public class AccountsController : BaseApiController
                 IsCOGS = a.IsCOGS,
                 IsNonDeductible = a.IsNonDeductible,
                 TaxCategory = a.TaxCategory,
+                FASBTopicId = a.FASBTopicId,
+                FASBSubtopicId = a.FASBSubtopicId,
+                FASBReference = a.FASBReference,
+                FASBTopicName = a.FASBTopic != null ? a.FASBTopic.TopicName : null,
+                FASBSubtopicName = a.FASBSubtopic != null ? a.FASBSubtopic.SubtopicName : null,
                 CreatedAt = a.CreatedAt,
                 UpdatedAt = a.UpdatedAt
             })
@@ -129,7 +143,10 @@ public class AccountsController : BaseApiController
             IsSystemAccount = false,
             IsCOGS = request.IsCOGS,
             IsNonDeductible = request.IsNonDeductible,
-            TaxCategory = request.TaxCategory
+            TaxCategory = request.TaxCategory,
+            FASBTopicId = request.FASBTopicId,
+            FASBSubtopicId = request.FASBSubtopicId,
+            FASBReference = request.FASBReference
         };
 
         _context.Accounts.Add(account);
@@ -152,6 +169,11 @@ public class AccountsController : BaseApiController
             IsCOGS = account.IsCOGS,
             IsNonDeductible = account.IsNonDeductible,
             TaxCategory = account.TaxCategory,
+            FASBTopicId = account.FASBTopicId,
+            FASBSubtopicId = account.FASBSubtopicId,
+            FASBReference = account.FASBReference,
+            FASBTopicName = null,
+            FASBSubtopicName = null,
             CreatedAt = account.CreatedAt,
             UpdatedAt = account.UpdatedAt
         };
@@ -182,6 +204,9 @@ public class AccountsController : BaseApiController
         account.IsCOGS = request.IsCOGS;
         account.IsNonDeductible = request.IsNonDeductible;
         account.TaxCategory = request.TaxCategory;
+        account.FASBTopicId = request.FASBTopicId;
+        account.FASBSubtopicId = request.FASBSubtopicId;
+        account.FASBReference = request.FASBReference;
 
         await _context.SaveChangesAsync();
 
@@ -202,10 +227,77 @@ public class AccountsController : BaseApiController
             IsCOGS = account.IsCOGS,
             IsNonDeductible = account.IsNonDeductible,
             TaxCategory = account.TaxCategory,
+            FASBTopicId = account.FASBTopicId,
+            FASBSubtopicId = account.FASBSubtopicId,
+            FASBReference = account.FASBReference,
+            FASBTopicName = null,
+            FASBSubtopicName = null,
             CreatedAt = account.CreatedAt,
             UpdatedAt = account.UpdatedAt
         };
 
         return Ok(dto);
+    }
+
+    /// <summary>
+    /// Get all FASB topics
+    /// </summary>
+    [HttpGet("~/api/v1/finance/fasb-topics")]
+    public async Task<IActionResult> GetFASBTopics([FromQuery] string? category = null)
+    {
+        var query = _context.FASBTopics.AsQueryable();
+
+        if (!string.IsNullOrEmpty(category) && Enum.TryParse<Core.Enums.FASBCategory>(category, true, out var fasbCategory))
+        {
+            query = query.Where(t => t.Category == fasbCategory);
+        }
+
+        var topics = await query
+            .OrderBy(t => t.TopicCode)
+            .Select(t => new FASBTopicDto
+            {
+                Id = t.Id,
+                TopicCode = t.TopicCode,
+                TopicName = t.TopicName,
+                Category = t.Category,
+                Description = t.Description,
+                IsSuperseded = t.IsSuperseded,
+                CreatedAt = t.CreatedAt,
+                UpdatedAt = t.UpdatedAt
+            })
+            .ToListAsync();
+
+        return Ok(topics);
+    }
+
+    /// <summary>
+    /// Get subtopics for a specific FASB topic
+    /// </summary>
+    [HttpGet("~/api/v1/finance/fasb-topics/{topicId}/subtopics")]
+    public async Task<IActionResult> GetFASBSubtopics(Guid topicId)
+    {
+        var topic = await _context.FASBTopics.FindAsync(topicId);
+        if (topic == null)
+        {
+            return NotFound($"FASB topic with ID {topicId} not found");
+        }
+
+        var subtopics = await _context.FASBSubtopics
+            .Where(s => s.FASBTopicId == topicId)
+            .OrderBy(s => s.SubtopicCode)
+            .Select(s => new FASBSubtopicDto
+            {
+                Id = s.Id,
+                FASBTopicId = s.FASBTopicId,
+                SubtopicCode = s.SubtopicCode,
+                SubtopicName = s.SubtopicName,
+                Description = s.Description,
+                IsRepealed = s.IsRepealed,
+                CreatedAt = s.CreatedAt,
+                UpdatedAt = s.UpdatedAt
+            })
+            .ToListAsync();
+
+        return Ok(subtopics);
     }
 }

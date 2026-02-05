@@ -83,7 +83,35 @@ public class Account : BaseEntity
     [MaxLength(100)]
     public string? TaxCategory { get; set; }
 
+    // FASB ASC Tracking
+    
+    /// <summary>
+    /// Foreign key to FASB topic (optional)
+    /// </summary>
+    public Guid? FASBTopicId { get; set; }
+    
+    /// <summary>
+    /// Foreign key to FASB subtopic (optional)
+    /// </summary>
+    public Guid? FASBSubtopicId { get; set; }
+    
+    /// <summary>
+    /// Full FASB reference (e.g., "ASC 606-10")
+    /// </summary>
+    [MaxLength(20)]
+    public string? FASBReference { get; set; }
+
     // Navigation properties
     public Company Company { get; set; } = null!;
     public ICollection<GeneralLedgerEntry> LedgerEntries { get; set; } = new List<GeneralLedgerEntry>();
+    
+    /// <summary>
+    /// FASB topic for this account (if mapped)
+    /// </summary>
+    public FASBTopic? FASBTopic { get; set; }
+    
+    /// <summary>
+    /// FASB subtopic for this account (if mapped)
+    /// </summary>
+    public FASBSubtopic? FASBSubtopic { get; set; }
 }

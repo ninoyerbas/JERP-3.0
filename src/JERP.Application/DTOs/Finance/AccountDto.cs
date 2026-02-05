@@ -31,6 +31,11 @@ public class AccountDto
     public bool IsCOGS { get; set; }
     public bool IsNonDeductible { get; set; }
     public string? TaxCategory { get; set; }
+    public Guid? FASBTopicId { get; set; }
+    public Guid? FASBSubtopicId { get; set; }
+    public string? FASBReference { get; set; }
+    public string? FASBTopicName { get; set; }
+    public string? FASBSubtopicName { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -48,6 +53,9 @@ public class CreateAccountRequest
     public bool IsCOGS { get; set; }
     public bool IsNonDeductible { get; set; }
     public string? TaxCategory { get; set; }
+    public Guid? FASBTopicId { get; set; }
+    public Guid? FASBSubtopicId { get; set; }
+    public string? FASBReference { get; set; }
 }
 
 /// <summary>
@@ -60,4 +68,7 @@ public class UpdateAccountRequest
     public bool IsCOGS { get; set; }
     public bool IsNonDeductible { get; set; }
     public string? TaxCategory { get; set; }
+    public Guid? FASBTopicId { get; set; }
+    public Guid? FASBSubtopicId { get; set; }
+    public string? FASBReference { get; set; }
 }
