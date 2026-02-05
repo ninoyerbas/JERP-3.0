@@ -51,6 +51,12 @@ public class FASBTopic : BaseEntity
     /// </summary>
     public bool IsSuperseded { get; set; } = false;
     
+    /// <summary>
+    /// Reference to superseding topic if applicable
+    /// </summary>
+    [MaxLength(100)]
+    public string? SupersededBy { get; set; }
+    
     // Navigation properties
     
     /// <summary>

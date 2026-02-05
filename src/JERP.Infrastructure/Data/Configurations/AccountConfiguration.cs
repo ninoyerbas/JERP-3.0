@@ -39,17 +39,20 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .IsRequired()
             .HasConversion<string>();
 
-        builder.Property(a => a.SubType)
-            .IsRequired()
-            .HasConversion<string>();
-
         builder.Property(a => a.Balance)
             .HasPrecision(18, 2);
 
         builder.Property(a => a.TaxCategory)
             .HasMaxLength(100);
 
+        builder.Property(a => a.FASBTopicId)
+            .IsRequired();
+
+        builder.Property(a => a.FASBSubtopicId)
+            .IsRequired();
+
         builder.Property(a => a.FASBReference)
+            .IsRequired()
             .HasMaxLength(20);
 
         // Indexes
@@ -62,6 +65,9 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
 
         builder.HasIndex(a => a.Type)
             .HasDatabaseName("IX_Accounts_Type");
+
+        builder.HasIndex(a => a.FASBReference)
+            .HasDatabaseName("IX_Accounts_FASBReference");
 
         builder.HasIndex(a => a.FASBTopicId)
             .HasDatabaseName("IX_Accounts_FASBTopicId");
@@ -83,12 +89,12 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.HasOne(a => a.FASBTopic)
             .WithMany(t => t.Accounts)
             .HasForeignKey(a => a.FASBTopicId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(a => a.FASBSubtopic)
             .WithMany(s => s.Accounts)
             .HasForeignKey(a => a.FASBSubtopicId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Query filter for soft delete
         builder.HasQueryFilter(a => !a.IsDeleted);
