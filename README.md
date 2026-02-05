@@ -39,6 +39,28 @@ See [LICENSE.md](LICENSE.md) for complete terms.
 
 ---
 
+## 🚀 Getting Started
+
+### For Developers
+
+If you're a developer with access to this repository, you can get started quickly:
+
+1. **Clone the Repository**:
+   - Using GitHub Desktop: See our [GitHub Desktop Guide](docs/GITHUB-DESKTOP-GUIDE.md)
+   - Using Git CLI: `git clone https://github.com/ninoyerbas/JERP-3.0.git`
+
+2. **Set Up Development Environment**:
+   - Install .NET 8.0 SDK
+   - Install SQL Server Express (see Database Configuration below)
+   - Configure your database connection
+
+3. **Additional Resources**:
+   - [GitHub Desktop Guide](docs/GITHUB-DESKTOP-GUIDE.md) - Clone, fetch, and work with this repo using GitHub Desktop
+   - [Multi-Database Guide](docs/MULTI-DATABASE-GUIDE.md) - PostgreSQL, MySQL, or SQL Server configuration
+   - [Testing Guide](TESTING-GUIDE.md) - Run tests and validate your changes
+
+---
+
 ## 🗄️ Database Configuration
 
 JERP 3.0 uses **Microsoft SQL Server** as its database.
