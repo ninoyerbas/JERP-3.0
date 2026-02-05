@@ -119,39 +119,43 @@ public partial class BillsViewModel : ViewModelBase
                     PayableDocuments.Add(bill);
                     TotalBillsCount++;
 
-                    if (bill.Status.ToString() == "Draft")
+                    var status = bill.Status.ToString();
+                    if (status == "Draft")
                     {
                         DraftBillsCount++;
                     }
-                    else if (bill.Status.ToString() == "Unpaid")
+                    else if (status == "Unpaid")
                     {
                         UnpaidBillsCount++;
                         TotalPayablesOutstanding += bill.AmountDue;
 
                         var daysOverdue = bill.DaysOverdue;
-                        if (daysOverdue <= 30)
+                        if (daysOverdue > 0 && daysOverdue <= 30)
+                        {
+                            AmountDueInAgingBucket0to30 += bill.AmountDue;
+                            OverdueBillsCount++;
+                        }
+                        else if (daysOverdue > 30 && daysOverdue <= 60)
+                        {
+                            AmountDueInAgingBucket31to60 += bill.AmountDue;
+                            OverdueBillsCount++;
+                        }
+                        else if (daysOverdue > 60 && daysOverdue <= 90)
+                        {
+                            AmountDueInAgingBucket61to90 += bill.AmountDue;
+                            OverdueBillsCount++;
+                        }
+                        else if (daysOverdue > 90)
+                        {
+                            AmountDueInAgingBucketOver90 += bill.AmountDue;
+                            OverdueBillsCount++;
+                        }
+                        else if (daysOverdue == 0)
                         {
                             AmountDueInAgingBucket0to30 += bill.AmountDue;
                         }
-                        else if (daysOverdue <= 60)
-                        {
-                            AmountDueInAgingBucket31to60 += bill.AmountDue;
-                        }
-                        else if (daysOverdue <= 90)
-                        {
-                            AmountDueInAgingBucket61to90 += bill.AmountDue;
-                        }
-                        else
-                        {
-                            AmountDueInAgingBucketOver90 += bill.AmountDue;
-                        }
-
-                        if (daysOverdue > 0)
-                        {
-                            OverdueBillsCount++;
-                        }
                     }
-                    else if (bill.Status.ToString() == "Paid")
+                    else if (status == "Paid")
                     {
                         PaidBillsCount++;
                         TotalPaymentsThisPeriod += bill.AmountPaid;
@@ -268,7 +272,14 @@ public partial class BillsViewModel : ViewModelBase
             var pdfBytes = await _apiClient.GetBytesAsync("api/finance/bills/aging-report/export");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var filePath = System.IO.Path.Combine(downloadsPath, "Downloads", $"AP_Aging_{DateTime.Now:yyyyMMdd}.pdf");
+            var downloadsFolder = System.IO.Path.Combine(downloadsPath, "Downloads");
+            
+            if (!System.IO.Directory.Exists(downloadsFolder))
+            {
+                downloadsFolder = downloadsPath;
+            }
+            
+            var filePath = System.IO.Path.Combine(downloadsFolder, $"AP_Aging_{DateTime.Now:yyyyMMdd}.pdf");
             
             await System.IO.File.WriteAllBytesAsync(filePath, pdfBytes);
             

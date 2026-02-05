@@ -228,7 +228,7 @@ public partial class CustomersViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task AdjustCreditLimitAsync(CustomerDto? customer)
+    private void AdjustCreditLimitAsync(CustomerDto? customer)
     {
         if (customer == null) return;
         // TODO: Open credit limit adjustment dialog

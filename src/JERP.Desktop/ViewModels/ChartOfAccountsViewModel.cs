@@ -137,7 +137,7 @@ public partial class ChartOfAccountsViewModel : ViewModelBase
                             break;
                     }
 
-                    if (account.FASBTopicId != Guid.Empty)
+                    if (account.FASBTopicId != Guid.Empty && account.FASBTopicId != default(Guid))
                     {
                         FasbCompliantAccountsCount++;
                     }
@@ -227,7 +227,14 @@ public partial class ChartOfAccountsViewModel : ViewModelBase
             var csvBytes = await _apiClient.GetBytesAsync("api/finance/accounts/export");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var filePath = System.IO.Path.Combine(downloadsPath, "Downloads", $"ChartOfAccounts_{DateTime.Now:yyyyMMdd}.csv");
+            var downloadsFolder = Path.Combine(downloadsPath, "Downloads");
+            
+            if (!Directory.Exists(downloadsFolder))
+            {
+                downloadsFolder = downloadsPath;
+            }
+            
+            var filePath = System.IO.Path.Combine(downloadsFolder, $"ChartOfAccounts_{DateTime.Now:yyyyMMdd}.csv");
             
             await System.IO.File.WriteAllBytesAsync(filePath, csvBytes);
             

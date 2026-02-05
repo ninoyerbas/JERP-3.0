@@ -253,7 +253,14 @@ public partial class FinancialReportsViewModel : ViewModelBase
                 $"api/finance/reports/profit-and-loss/export?startDate={ReportPeriodStartDate:yyyy-MM-dd}&endDate={ReportPeriodEndDate:yyyy-MM-dd}");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var filePath = Path.Combine(downloadsPath, "Downloads", 
+            var downloadsFolder = Path.Combine(downloadsPath, "Downloads");
+            
+            if (!Directory.Exists(downloadsFolder))
+            {
+                downloadsFolder = downloadsPath;
+            }
+            
+            var filePath = Path.Combine(downloadsFolder, 
                 $"PL_Statement_{ReportPeriodStartDate:yyyyMMdd}_to_{ReportPeriodEndDate:yyyyMMdd}.pdf");
             
             await File.WriteAllBytesAsync(filePath, pdfBytes);
@@ -284,7 +291,14 @@ public partial class FinancialReportsViewModel : ViewModelBase
                 $"api/finance/reports/balance-sheet/export?asOfDate={BalanceSheetAsOfDate:yyyy-MM-dd}");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var filePath = Path.Combine(downloadsPath, "Downloads", 
+            var downloadsFolder = Path.Combine(downloadsPath, "Downloads");
+            
+            if (!Directory.Exists(downloadsFolder))
+            {
+                downloadsFolder = downloadsPath;
+            }
+            
+            var filePath = Path.Combine(downloadsFolder, 
                 $"Balance_Sheet_{BalanceSheetAsOfDate:yyyyMMdd}.pdf");
             
             await File.WriteAllBytesAsync(filePath, pdfBytes);

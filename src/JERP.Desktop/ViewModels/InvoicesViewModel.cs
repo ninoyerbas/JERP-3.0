@@ -122,42 +122,43 @@ public partial class InvoicesViewModel : ViewModelBase
                     ReceivableDocuments.Add(invoice);
                     TotalInvoicesCount++;
 
-                    if (invoice.Status.ToString() == "Draft")
+                    var status = invoice.Status.ToString();
+                    if (status == "Draft")
                     {
                         DraftInvoicesCount++;
                     }
-                    else if (invoice.Status.ToString() == "Sent")
+                    else if (status == "Sent")
                     {
                         SentInvoicesCount++;
                         TotalReceivablesOutstanding += invoice.AmountDue;
 
                         var daysOverdue = invoice.DaysOverdue;
-                        if (daysOverdue == 0)
-                        {
-                            AmountDueInAgingBucket0to30 += invoice.AmountDue;
-                        }
-                        else if (daysOverdue <= 30)
+                        if (daysOverdue > 0 && daysOverdue <= 30)
                         {
                             AmountDueInAgingBucket0to30 += invoice.AmountDue;
                             OverdueInvoicesCount++;
                         }
-                        else if (daysOverdue <= 60)
+                        else if (daysOverdue > 30 && daysOverdue <= 60)
                         {
                             AmountDueInAgingBucket31to60 += invoice.AmountDue;
                             OverdueInvoicesCount++;
                         }
-                        else if (daysOverdue <= 90)
+                        else if (daysOverdue > 60 && daysOverdue <= 90)
                         {
                             AmountDueInAgingBucket61to90 += invoice.AmountDue;
                             OverdueInvoicesCount++;
                         }
-                        else
+                        else if (daysOverdue > 90)
                         {
                             AmountDueInAgingBucketOver90 += invoice.AmountDue;
                             OverdueInvoicesCount++;
                         }
+                        else if (daysOverdue == 0)
+                        {
+                            AmountDueInAgingBucket0to30 += invoice.AmountDue;
+                        }
                     }
-                    else if (invoice.Status.ToString() == "Paid")
+                    else if (status == "Paid")
                     {
                         PaidInvoicesCount++;
                         TotalCollectionsThisPeriod += invoice.AmountPaid;
@@ -299,7 +300,14 @@ public partial class InvoicesViewModel : ViewModelBase
             var pdfBytes = await _apiClient.GetBytesAsync("api/finance/invoices/aging-analysis/export");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var filePath = System.IO.Path.Combine(downloadsPath, "Downloads", $"AR_Aging_{DateTime.Now:yyyyMMdd}.pdf");
+            var downloadsFolder = System.IO.Path.Combine(downloadsPath, "Downloads");
+            
+            if (!System.IO.Directory.Exists(downloadsFolder))
+            {
+                downloadsFolder = downloadsPath;
+            }
+            
+            var filePath = System.IO.Path.Combine(downloadsFolder, $"AR_Aging_{DateTime.Now:yyyyMMdd}.pdf");
             
             await System.IO.File.WriteAllBytesAsync(filePath, pdfBytes);
             

@@ -105,11 +105,12 @@ public partial class JournalEntriesViewModel : ViewModelBase
                     BookEntries.Add(entry);
                     TotalEntriesCount++;
 
-                    if (entry.Status.ToString() == "Draft")
+                    var status = entry.Status.ToString();
+                    if (status == "Draft")
                     {
                         DraftEntriesCount++;
                     }
-                    else if (entry.Status.ToString() == "Posted")
+                    else if (status == "Posted")
                     {
                         PostedEntriesCount++;
                         TotalDebitsPosted += entry.TotalDebit;
