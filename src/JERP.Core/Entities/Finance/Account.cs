@@ -110,5 +110,5 @@ public class Account : BaseEntity
     /// <summary>
     /// FASB subtopic for this account
     /// </summary>
-    public FASBSubtopic FASBSubtopic { get; set; } = null!
+    public FASBSubtopic FASBSubtopic { get; set; } = null!;
 }
