@@ -29,6 +29,11 @@ export interface Account {
   cannabisRelated?: boolean;
   icon?: string;
   description?: string;
+  fasbTopicId?: string;
+  fasbSubtopicId?: string;
+  fasbReference?: string;
+  fasbTopicName?: string;
+  fasbSubtopicName?: string;
 }
 
 export interface JournalEntryLine {

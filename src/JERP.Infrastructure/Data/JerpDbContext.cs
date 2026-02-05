@@ -45,6 +45,8 @@ namespace JERP.Infrastructure.Data
         public DbSet<CustomerInvoice> CustomerInvoices => Set<CustomerInvoice>();
         public DbSet<InvoiceLineItem> InvoiceLineItems => Set<InvoiceLineItem>();
         public DbSet<InvoicePayment> InvoicePayments => Set<InvoicePayment>();
+        public DbSet<FASBTopic> FASBTopics => Set<FASBTopic>();
+        public DbSet<FASBSubtopic> FASBSubtopics => Set<FASBSubtopic>();
         
         // DbSets - Inventory
         public DbSet<Product> Products => Set<Product>();
@@ -73,6 +75,9 @@ namespace JERP.Infrastructure.Data
             
             // Apply all entity configurations from assembly
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(JerpDbContext).Assembly);
+            
+            // Seed FASB data
+            Seeders.FASBDataSeeder.SeedFASBData(modelBuilder);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
