@@ -420,10 +420,14 @@ public class StockAdjustmentService : IStockAdjustmentService
             return "ADJ-0001";
         }
 
-        var lastNumber = int.Parse(lastAdjustment.AdjustmentNumber.Split('-')[1]);
-        var nextNumber = lastNumber + 1;
+        var parts = lastAdjustment.AdjustmentNumber.Split('-');
+        if (parts.Length >= 2 && int.TryParse(parts[1], out var lastNumber))
+        {
+            var nextNumber = lastNumber + 1;
+            return $"ADJ-{nextNumber:D4}";
+        }
 
-        return $"ADJ-{nextNumber:D4}";
+        return "ADJ-0001";
     }
 
     private static AdjustmentReason ParseAdjustmentReason(string reason)
