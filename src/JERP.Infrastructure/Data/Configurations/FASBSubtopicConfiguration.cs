@@ -35,18 +35,10 @@ public class FASBSubtopicConfiguration : IEntityTypeConfiguration<FASBSubtopic>
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(s => s.FullReference)
-            .IsRequired()
-            .HasMaxLength(20);
-
         builder.Property(s => s.Description)
             .HasMaxLength(1000);
 
         // Indexes
-        builder.HasIndex(s => s.FullReference)
-            .IsUnique()
-            .HasDatabaseName("IX_FASBSubtopics_FullReference");
-
         builder.HasIndex(s => s.FASBTopicId)
             .HasDatabaseName("IX_FASBSubtopics_FASBTopicId");
 

@@ -42,9 +42,6 @@ public class FASBTopicConfiguration : IEntityTypeConfiguration<FASBTopic>
         builder.Property(t => t.Description)
             .HasMaxLength(1000);
 
-        builder.Property(t => t.SupersededBy)
-            .HasMaxLength(100);
-
         // Indexes
         builder.HasIndex(t => t.TopicCode)
             .IsUnique()

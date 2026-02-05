@@ -25,8 +25,6 @@ public class FASBTopicDto
     public FASBCategory Category { get; set; }
     public string? Description { get; set; }
     public bool IsSuperseded { get; set; }
-    public string? SupersededBy { get; set; }
-    public List<FASBSubtopicDto> Subtopics { get; set; } = new();
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -40,7 +38,6 @@ public class FASBSubtopicDto
     public Guid FASBTopicId { get; set; }
     public required string SubtopicCode { get; set; }
     public required string SubtopicName { get; set; }
-    public required string FullReference { get; set; }
     public string? Description { get; set; }
     public bool IsRepealed { get; set; }
     public DateTime CreatedAt { get; set; }

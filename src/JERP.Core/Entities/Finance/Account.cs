@@ -47,6 +47,12 @@ public class Account : BaseEntity
     public AccountType Type { get; set; }
 
     /// <summary>
+    /// Account sub-type for more detailed classification
+    /// </summary>
+    [Required]
+    public AccountSubType SubType { get; set; }
+
+    /// <summary>
     /// Current balance of the account
     /// </summary>
     public decimal Balance { get; set; } = 0;
@@ -80,35 +86,32 @@ public class Account : BaseEntity
     // FASB ASC Tracking
     
     /// <summary>
-    /// Foreign key to FASB topic (REQUIRED)
+    /// Foreign key to FASB topic (optional)
     /// </summary>
-    [Required]
-    public Guid FASBTopicId { get; set; }
+    public Guid? FASBTopicId { get; set; }
     
     /// <summary>
-    /// Foreign key to FASB subtopic (REQUIRED)
+    /// Foreign key to FASB subtopic (optional)
     /// </summary>
-    [Required]
-    public Guid FASBSubtopicId { get; set; }
+    public Guid? FASBSubtopicId { get; set; }
     
     /// <summary>
     /// Full FASB reference (e.g., "ASC 606-10")
     /// </summary>
-    [Required]
     [MaxLength(20)]
-    public string FASBReference { get; set; } = string.Empty;
+    public string? FASBReference { get; set; }
 
     // Navigation properties
     public Company Company { get; set; } = null!;
     public ICollection<GeneralLedgerEntry> LedgerEntries { get; set; } = new List<GeneralLedgerEntry>();
     
     /// <summary>
-    /// FASB topic for this account
+    /// FASB topic for this account (if mapped)
     /// </summary>
-    public FASBTopic FASBTopic { get; set; } = null!;
+    public FASBTopic? FASBTopic { get; set; }
     
     /// <summary>
-    /// FASB subtopic for this account
+    /// FASB subtopic for this account (if mapped)
     /// </summary>
-    public FASBSubtopic FASBSubtopic { get; set; } = null!;
+    public FASBSubtopic? FASBSubtopic { get; set; }
 }
