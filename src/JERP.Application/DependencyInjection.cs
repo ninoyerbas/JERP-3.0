@@ -18,6 +18,7 @@ using JERP.Application.Services.Inventory;
 using JERP.Application.Services.Payroll;
 using JERP.Application.Services.Payroll.Pdf;
 using JERP.Application.Services.Payroll.Tax;
+using JERP.Application.Services.SalesOrders;
 using JERP.Application.Services.PurchaseOrders;
 using JERP.Application.Services.Security;
 using JERP.Application.Services.Timesheets;
@@ -60,6 +61,11 @@ public static class DependencyInjection
         services.AddScoped<IStockMovementService, StockMovementService>();
         services.AddScoped<IStockAdjustmentService, StockAdjustmentService>();
         services.AddScoped<IInventoryValuationService, InventoryValuationService>();
+
+        // Register Sales Order services
+        services.AddScoped<ISalesOrderService, SalesOrderService>();
+        services.AddScoped<ISOShipmentService, SOShipmentService>();
+        services.AddScoped<ISalesReturnService, SalesReturnService>();
 
         // Register authorization handlers
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
