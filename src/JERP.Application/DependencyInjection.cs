@@ -14,10 +14,12 @@ using FluentValidation;
 using JERP.Application.Authorization;
 using JERP.Application.Services.Auth;
 using JERP.Application.Services.Employees;
+using JERP.Application.Services.Inventory;
 using JERP.Application.Services.Payroll;
 using JERP.Application.Services.Payroll.Pdf;
 using JERP.Application.Services.Payroll.Tax;
 using JERP.Application.Services.SalesOrders;
+using JERP.Application.Services.PurchaseOrders;
 using JERP.Application.Services.Security;
 using JERP.Application.Services.Timesheets;
 using Microsoft.AspNetCore.Authorization;
@@ -47,6 +49,18 @@ public static class DependencyInjection
         services.AddScoped<ITaxCalculationService, TaxCalculationService>();
         services.AddScoped<IPdfGenerationService, PdfGenerationService>();
         services.AddScoped<IAuditLogService, AuditLogService>();
+        
+        // Register purchase order services
+        services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+        services.AddScoped<IPOReceiptService, POReceiptService>();
+        services.AddScoped<IVendorBillService, VendorBillService>();
+
+        // Register Inventory services
+        services.AddScoped<IInventoryItemService, InventoryItemService>();
+        services.AddScoped<IBatchLotService, BatchLotService>();
+        services.AddScoped<IStockMovementService, StockMovementService>();
+        services.AddScoped<IStockAdjustmentService, StockAdjustmentService>();
+        services.AddScoped<IInventoryValuationService, InventoryValuationService>();
 
         // Register Sales Order services
         services.AddScoped<ISalesOrderService, SalesOrderService>();
