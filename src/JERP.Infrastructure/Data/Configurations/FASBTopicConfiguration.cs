@@ -59,7 +59,7 @@ public class FASBTopicConfiguration : IEntityTypeConfiguration<FASBTopic>
         builder.HasMany(t => t.Accounts)
             .WithOne(a => a.FASBTopic)
             .HasForeignKey(a => a.FASBTopicId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Query filter for soft delete
         builder.HasQueryFilter(t => !t.IsDeleted);

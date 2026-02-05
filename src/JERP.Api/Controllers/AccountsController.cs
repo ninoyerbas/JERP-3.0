@@ -55,7 +55,6 @@ public class AccountsController : BaseApiController
                 AccountNumber = a.AccountNumber,
                 AccountName = a.AccountName,
                 Type = a.Type,
-                SubType = a.SubType,
                 Balance = a.Balance,
                 IsActive = a.IsActive,
                 IsSystemAccount = a.IsSystemAccount,
@@ -67,6 +66,7 @@ public class AccountsController : BaseApiController
                 FASBReference = a.FASBReference,
                 FASBTopicName = a.FASBTopic != null ? a.FASBTopic.TopicName : null,
                 FASBSubtopicName = a.FASBSubtopic != null ? a.FASBSubtopic.SubtopicName : null,
+                FASBCategory = a.FASBTopic != null ? (Core.Enums.FASBCategory?)a.FASBTopic.Category : null,
                 CreatedAt = a.CreatedAt,
                 UpdatedAt = a.UpdatedAt
             })
@@ -92,7 +92,6 @@ public class AccountsController : BaseApiController
                 AccountNumber = a.AccountNumber,
                 AccountName = a.AccountName,
                 Type = a.Type,
-                SubType = a.SubType,
                 Balance = a.Balance,
                 IsActive = a.IsActive,
                 IsSystemAccount = a.IsSystemAccount,
@@ -104,6 +103,7 @@ public class AccountsController : BaseApiController
                 FASBReference = a.FASBReference,
                 FASBTopicName = a.FASBTopic != null ? a.FASBTopic.TopicName : null,
                 FASBSubtopicName = a.FASBSubtopic != null ? a.FASBSubtopic.SubtopicName : null,
+                FASBCategory = a.FASBTopic != null ? (Core.Enums.FASBCategory?)a.FASBTopic.Category : null,
                 CreatedAt = a.CreatedAt,
                 UpdatedAt = a.UpdatedAt
             })
@@ -138,7 +138,6 @@ public class AccountsController : BaseApiController
             AccountNumber = request.AccountNumber,
             AccountName = request.AccountName,
             Type = request.Type,
-            SubType = request.SubType,
             IsActive = true,
             IsSystemAccount = false,
             IsCOGS = request.IsCOGS,
@@ -162,7 +161,6 @@ public class AccountsController : BaseApiController
             AccountNumber = account.AccountNumber,
             AccountName = account.AccountName,
             Type = account.Type,
-            SubType = account.SubType,
             Balance = account.Balance,
             IsActive = account.IsActive,
             IsSystemAccount = account.IsSystemAccount,
@@ -174,6 +172,7 @@ public class AccountsController : BaseApiController
             FASBReference = account.FASBReference,
             FASBTopicName = null,
             FASBSubtopicName = null,
+            FASBCategory = null,
             CreatedAt = account.CreatedAt,
             UpdatedAt = account.UpdatedAt
         };
@@ -220,7 +219,6 @@ public class AccountsController : BaseApiController
             AccountNumber = account.AccountNumber,
             AccountName = account.AccountName,
             Type = account.Type,
-            SubType = account.SubType,
             Balance = account.Balance,
             IsActive = account.IsActive,
             IsSystemAccount = account.IsSystemAccount,
@@ -232,6 +230,7 @@ public class AccountsController : BaseApiController
             FASBReference = account.FASBReference,
             FASBTopicName = null,
             FASBSubtopicName = null,
+            FASBCategory = null,
             CreatedAt = account.CreatedAt,
             UpdatedAt = account.UpdatedAt
         };

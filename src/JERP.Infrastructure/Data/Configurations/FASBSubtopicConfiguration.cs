@@ -55,7 +55,7 @@ public class FASBSubtopicConfiguration : IEntityTypeConfiguration<FASBSubtopic>
         builder.HasMany(s => s.Accounts)
             .WithOne(a => a.FASBSubtopic)
             .HasForeignKey(a => a.FASBSubtopicId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Query filter for soft delete
         builder.HasQueryFilter(s => !s.IsDeleted);

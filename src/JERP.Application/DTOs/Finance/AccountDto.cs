@@ -24,18 +24,21 @@ public class AccountDto
     public required string AccountNumber { get; set; }
     public required string AccountName { get; set; }
     public AccountType Type { get; set; }
-    public AccountSubType SubType { get; set; }
     public decimal Balance { get; set; }
     public bool IsActive { get; set; }
     public bool IsSystemAccount { get; set; }
     public bool IsCOGS { get; set; }
     public bool IsNonDeductible { get; set; }
     public string? TaxCategory { get; set; }
-    public Guid? FASBTopicId { get; set; }
-    public Guid? FASBSubtopicId { get; set; }
+    
+    // FASB ASC fields (REQUIRED)
+    public Guid FASBTopicId { get; set; }
+    public Guid FASBSubtopicId { get; set; }
     public string? FASBReference { get; set; }
     public string? FASBTopicName { get; set; }
     public string? FASBSubtopicName { get; set; }
+    public FASBCategory? FASBCategory { get; set; }
+    
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -49,12 +52,13 @@ public class CreateAccountRequest
     public required string AccountNumber { get; set; }
     public required string AccountName { get; set; }
     public AccountType Type { get; set; }
-    public AccountSubType SubType { get; set; }
     public bool IsCOGS { get; set; }
     public bool IsNonDeductible { get; set; }
     public string? TaxCategory { get; set; }
-    public Guid? FASBTopicId { get; set; }
-    public Guid? FASBSubtopicId { get; set; }
+    
+    // FASB fields (REQUIRED)
+    public Guid FASBTopicId { get; set; }
+    public Guid FASBSubtopicId { get; set; }
     public string? FASBReference { get; set; }
 }
 
@@ -68,7 +72,9 @@ public class UpdateAccountRequest
     public bool IsCOGS { get; set; }
     public bool IsNonDeductible { get; set; }
     public string? TaxCategory { get; set; }
-    public Guid? FASBTopicId { get; set; }
-    public Guid? FASBSubtopicId { get; set; }
+    
+    // FASB fields (REQUIRED)
+    public Guid FASBTopicId { get; set; }
+    public Guid FASBSubtopicId { get; set; }
     public string? FASBReference { get; set; }
 }

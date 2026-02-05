@@ -18,6 +18,17 @@ export type InvoiceStatus = 'Draft' | 'Sent' | 'Paid' | 'Overdue' | 'Partial';
 
 export type AccountingStandard = 'US GAAP' | 'IFRS' | 'Dual Reporting';
 
+export enum FASBCategory {
+  Presentation = 200,
+  Assets = 300,
+  Liabilities = 400,
+  Equity = 500,
+  Revenue = 600,
+  Expenses = 700,
+  BroadTransactions = 800,
+  Industry = 900
+}
+
 export interface Account {
   id: string;
   code: string;
@@ -29,11 +40,13 @@ export interface Account {
   cannabisRelated?: boolean;
   icon?: string;
   description?: string;
-  fasbTopicId?: string;
-  fasbSubtopicId?: string;
+  // FASB ASC fields (REQUIRED)
+  fasbTopicId: string;
+  fasbSubtopicId: string;
   fasbReference?: string;
   fasbTopicName?: string;
   fasbSubtopicName?: string;
+  fasbCategory?: FASBCategory;
 }
 
 export interface JournalEntryLine {
