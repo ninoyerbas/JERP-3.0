@@ -257,9 +257,14 @@ public class SalesReturnService : ISalesReturnService
             return "RMA-0001";
         }
 
-        var lastNumber = int.Parse(lastReturn.RMANumber.Split('-')[1]);
-        var nextNumber = lastNumber + 1;
+        var parts = lastReturn.RMANumber.Split('-');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var lastNumber))
+        {
+            _logger.LogWarning("Invalid RMA number format: {RMANumber}, generating from scratch", lastReturn.RMANumber);
+            return "RMA-0001";
+        }
 
+        var nextNumber = lastNumber + 1;
         return $"RMA-{nextNumber:D4}";
     }
 }

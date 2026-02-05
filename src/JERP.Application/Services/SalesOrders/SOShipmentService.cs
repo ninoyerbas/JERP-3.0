@@ -243,6 +243,9 @@ public class SOShipmentService : ISOShipmentService
 
             if (inventoryLevel != null)
             {
+                // Convert decimal quantity to int for inventory tracking
+                // Note: QuantityOnHand is stored as int in InventoryLevel entity
+                // Rounding is used to handle minor decimal differences
                 var qtyChange = (int)Math.Round(line.QuantityShipped);
                 inventoryLevel.QuantityOnHand -= qtyChange;
 
@@ -320,9 +323,14 @@ public class SOShipmentService : ISOShipmentService
             return "SHIP-0001";
         }
 
-        var lastNumber = int.Parse(lastShipment.ShipmentNumber.Split('-')[1]);
-        var nextNumber = lastNumber + 1;
+        var parts = lastShipment.ShipmentNumber.Split('-');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var lastNumber))
+        {
+            _logger.LogWarning("Invalid shipment number format: {ShipmentNumber}, generating from scratch", lastShipment.ShipmentNumber);
+            return "SHIP-0001";
+        }
 
+        var nextNumber = lastNumber + 1;
         return $"SHIP-{nextNumber:D4}";
     }
 }

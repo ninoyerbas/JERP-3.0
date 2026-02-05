@@ -482,9 +482,14 @@ public class SalesOrderService : ISalesOrderService
             return "SO-0001";
         }
 
-        var lastNumber = int.Parse(lastOrder.SONumber.Split('-')[1]);
-        var nextNumber = lastNumber + 1;
+        var parts = lastOrder.SONumber.Split('-');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var lastNumber))
+        {
+            _logger.LogWarning("Invalid SO number format: {SONumber}, generating from scratch", lastOrder.SONumber);
+            return "SO-0001";
+        }
 
+        var nextNumber = lastNumber + 1;
         return $"SO-{nextNumber:D4}";
     }
 
