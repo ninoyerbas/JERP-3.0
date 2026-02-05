@@ -169,7 +169,7 @@ public class POReceiptService : IPOReceiptService
                 ProductId = poLine.ProductId,
                 QuantityReceived = (int)lineRequest.QuantityReceived,
                 UnitCost = poLine.UnitCost,
-                BatchNumber = lineRequest.BatchNumber ?? $"BATCH-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 8)}",
+                BatchNumber = lineRequest.BatchNumber ?? $"BATCH-{DateTime.UtcNow:yyyyMMdd}-{Guid.NewGuid().ToString()[..8]}",
                 ExpirationDate = lineRequest.ExpirationDate,
                 Notes = lineRequest.Notes
             };
@@ -231,9 +231,26 @@ public class POReceiptService : IPOReceiptService
             return "RCV-0001";
         }
 
-        var lastNumber = int.Parse(lastReceipt.ReceiptNumber.Split('-')[1]);
-        var nextNumber = lastNumber + 1;
+        // Parse with validation
+        var parts = lastReceipt.ReceiptNumber.Split('-');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var lastNumber))
+        {
+            // If format is corrupted, find the maximum number
+            var maxNumber = await _context.StockReceipts
+                .Where(r => r.CompanyId == companyId && r.ReceiptNumber.StartsWith("RCV-"))
+                .Select(r => r.ReceiptNumber)
+                .ToListAsync()
+                .ContinueWith(task => task.Result
+                    .Select(n => n.Split('-'))
+                    .Where(p => p.Length == 2 && int.TryParse(p[1], out _))
+                    .Select(p => int.Parse(p[1]))
+                    .DefaultIfEmpty(0)
+                    .Max());
+            
+            lastNumber = maxNumber;
+        }
 
+        var nextNumber = lastNumber + 1;
         return $"RCV-{nextNumber:D4}";
     }
 }

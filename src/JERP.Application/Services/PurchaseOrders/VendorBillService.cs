@@ -219,9 +219,26 @@ public class VendorBillService : IVendorBillService
             return "BILL-0001";
         }
 
-        var lastNumber = int.Parse(lastBill.BillNumber.Split('-')[1]);
-        var nextNumber = lastNumber + 1;
+        // Parse with validation
+        var parts = lastBill.BillNumber.Split('-');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var lastNumber))
+        {
+            // If format is corrupted, find the maximum number
+            var maxNumber = await _context.VendorBills
+                .Where(b => b.CompanyId == companyId && b.BillNumber.StartsWith("BILL-"))
+                .Select(b => b.BillNumber)
+                .ToListAsync()
+                .ContinueWith(task => task.Result
+                    .Select(n => n.Split('-'))
+                    .Where(p => p.Length == 2 && int.TryParse(p[1], out _))
+                    .Select(p => int.Parse(p[1]))
+                    .DefaultIfEmpty(0)
+                    .Max());
+            
+            lastNumber = maxNumber;
+        }
 
+        var nextNumber = lastNumber + 1;
         return $"BILL-{nextNumber:D4}";
     }
 }

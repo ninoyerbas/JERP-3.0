@@ -128,7 +128,8 @@ public class PurchaseOrderService : IPurchaseOrderService
 
         // Calculate totals
         var subtotal = request.LineItems.Sum(l => l.Quantity * l.UnitPrice);
-        var taxAmount = subtotal * 0; // TODO: Implement tax calculation
+        // TODO: Implement proper tax calculation based on vendor location and tax rules
+        var taxAmount = subtotal * 0; 
         var totalAmount = subtotal + taxAmount + request.ShippingAmount;
 
         var po = new PurchaseOrder
@@ -308,9 +309,26 @@ public class PurchaseOrderService : IPurchaseOrderService
             return "PO-0001";
         }
 
-        var lastNumber = int.Parse(lastPO.PONumber.Split('-')[1]);
-        var nextNumber = lastNumber + 1;
+        // Parse with validation
+        var parts = lastPO.PONumber.Split('-');
+        if (parts.Length != 2 || !int.TryParse(parts[1], out var lastNumber))
+        {
+            // If format is corrupted, find the maximum number from all POs
+            var maxNumber = await _context.PurchaseOrders
+                .Where(po => po.CompanyId == companyId && po.PONumber.StartsWith("PO-"))
+                .Select(po => po.PONumber)
+                .ToListAsync()
+                .ContinueWith(task => task.Result
+                    .Select(n => n.Split('-'))
+                    .Where(p => p.Length == 2 && int.TryParse(p[1], out _))
+                    .Select(p => int.Parse(p[1]))
+                    .DefaultIfEmpty(0)
+                    .Max());
+            
+            lastNumber = maxNumber;
+        }
 
+        var nextNumber = lastNumber + 1;
         return $"PO-{nextNumber:D4}";
     }
 }
