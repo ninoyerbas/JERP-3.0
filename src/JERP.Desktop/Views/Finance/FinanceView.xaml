@@ -1,0 +1,48 @@
+<!--
+    JERP 3.0 - Payroll & ERP System
+    Copyright (c) 2026 ninoyerbas. All Rights Reserved.
+    
+    PROPRIETARY AND CONFIDENTIAL
+    
+    This source code is the confidential and proprietary information of ninoyerbas.
+    Unauthorized copying, modification, distribution, or use is strictly prohibited.
+    
+    For licensing inquiries: licensing@jerp.io
+-->
+
+<UserControl x:Class="JERP.Desktop.Views.Finance.FinanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:local="clr-namespace:JERP.Desktop.Views.Finance">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Finance" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <ui:TabControl Grid.Row="1">
+            <ui:TabItem Header="Chart of Accounts">
+                <local:ChartOfAccountsView/>
+            </ui:TabItem>
+            <ui:TabItem Header="Journal Entries">
+                <local:JournalEntriesView/>
+            </ui:TabItem>
+            <ui:TabItem Header="Vendors">
+                <local:VendorsView/>
+            </ui:TabItem>
+            <ui:TabItem Header="Bills">
+                <local:BillsView/>
+            </ui:TabItem>
+            <ui:TabItem Header="Customers">
+                <local:CustomersView/>
+            </ui:TabItem>
+            <ui:TabItem Header="Invoices">
+                <local:InvoicesView/>
+            </ui:TabItem>
+        </ui:TabControl>
+    </Grid>
+</UserControl>
