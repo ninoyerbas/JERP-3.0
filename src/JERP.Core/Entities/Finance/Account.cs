@@ -46,6 +46,8 @@ public class Account : BaseEntity
     [Required]
     public AccountType Type { get; set; }
 
+
+
     /// <summary>
     /// Current balance of the account
     /// </summary>
@@ -77,22 +79,22 @@ public class Account : BaseEntity
     [MaxLength(100)]
     public string? TaxCategory { get; set; }
 
-    // FASB ASC Tracking
+    // FASB ASC Tracking (REQUIRED)
     
     /// <summary>
-    /// Foreign key to FASB topic (REQUIRED)
+    /// Foreign key to FASB topic (REQUIRED for all accounts)
     /// </summary>
     [Required]
     public Guid FASBTopicId { get; set; }
     
     /// <summary>
-    /// Foreign key to FASB subtopic (REQUIRED)
+    /// Foreign key to FASB subtopic (REQUIRED for all accounts)
     /// </summary>
     [Required]
     public Guid FASBSubtopicId { get; set; }
     
     /// <summary>
-    /// Full FASB reference (e.g., "ASC 606-10")
+    /// Full FASB reference (e.g., "ASC 606-10") - Auto-calculated from topic and subtopic
     /// </summary>
     [Required]
     [MaxLength(20)]
@@ -103,12 +105,12 @@ public class Account : BaseEntity
     public ICollection<GeneralLedgerEntry> LedgerEntries { get; set; } = new List<GeneralLedgerEntry>();
     
     /// <summary>
-    /// FASB topic for this account
+    /// FASB topic for this account (REQUIRED)
     /// </summary>
     public FASBTopic FASBTopic { get; set; } = null!;
     
     /// <summary>
-    /// FASB subtopic for this account
+    /// FASB subtopic for this account (REQUIRED)
     /// </summary>
     public FASBSubtopic FASBSubtopic { get; set; } = null!;
 }

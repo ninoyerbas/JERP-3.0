@@ -39,7 +39,7 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .IsRequired()
             .HasConversion<string>();
 
-        builder.Property(a => a.Balance)
+builder.Property(a => a.Balance)
             .HasPrecision(18, 2);
 
         builder.Property(a => a.TaxCategory)
@@ -89,12 +89,14 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.HasOne(a => a.FASBTopic)
             .WithMany(t => t.Accounts)
             .HasForeignKey(a => a.FASBTopicId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
 
         builder.HasOne(a => a.FASBSubtopic)
             .WithMany(s => s.Accounts)
             .HasForeignKey(a => a.FASBSubtopicId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Restrict)
+            .IsRequired();
 
         // Query filter for soft delete
         builder.HasQueryFilter(a => !a.IsDeleted);

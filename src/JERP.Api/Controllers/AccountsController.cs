@@ -64,8 +64,9 @@ public class AccountsController : BaseApiController
                 FASBTopicId = a.FASBTopicId,
                 FASBSubtopicId = a.FASBSubtopicId,
                 FASBReference = a.FASBReference,
-                FASBTopicName = a.FASBTopic.TopicName,
-                FASBSubtopicName = a.FASBSubtopic.SubtopicName,
+                FASBTopicName = a.FASBTopic != null ? a.FASBTopic.TopicName : null,
+                FASBSubtopicName = a.FASBSubtopic != null ? a.FASBSubtopic.SubtopicName : null,
+                FASBCategory = a.FASBTopic != null ? (Core.Enums.FASBCategory?)a.FASBTopic.Category : null,
                 CreatedAt = a.CreatedAt,
                 UpdatedAt = a.UpdatedAt
             })
@@ -100,8 +101,9 @@ public class AccountsController : BaseApiController
                 FASBTopicId = a.FASBTopicId,
                 FASBSubtopicId = a.FASBSubtopicId,
                 FASBReference = a.FASBReference,
-                FASBTopicName = a.FASBTopic.TopicName,
-                FASBSubtopicName = a.FASBSubtopic.SubtopicName,
+                FASBTopicName = a.FASBTopic != null ? a.FASBTopic.TopicName : null,
+                FASBSubtopicName = a.FASBSubtopic != null ? a.FASBSubtopic.SubtopicName : null,
+                FASBCategory = a.FASBTopic != null ? (Core.Enums.FASBCategory?)a.FASBTopic.Category : null,
                 CreatedAt = a.CreatedAt,
                 UpdatedAt = a.UpdatedAt
             })
@@ -170,6 +172,7 @@ public class AccountsController : BaseApiController
             FASBReference = account.FASBReference,
             FASBTopicName = null,
             FASBSubtopicName = null,
+            FASBCategory = null,
             CreatedAt = account.CreatedAt,
             UpdatedAt = account.UpdatedAt
         };
@@ -227,6 +230,7 @@ public class AccountsController : BaseApiController
             FASBReference = account.FASBReference,
             FASBTopicName = null,
             FASBSubtopicName = null,
+            FASBCategory = null,
             CreatedAt = account.CreatedAt,
             UpdatedAt = account.UpdatedAt
         };
