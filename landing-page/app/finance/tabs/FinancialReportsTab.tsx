@@ -1,7 +1,12 @@
 /**
  * JERP 3.0 - Finance Module - Financial Reports Tab Component
- * Copyright (c) 2024 JERP. All rights reserved.
+ * Copyright (c) 2026 ninoyerbas. All Rights Reserved.
  * 
+ * PROPRIETARY AND CONFIDENTIAL
+ * 
+ * Unauthorized copying, modification, distribution, or use is strictly prohibited.
+ * For licensing inquiries: licensing@jerp.io
+ *
  * Displays Profit & Loss Statement and Balance Sheet side-by-side
  */
 
