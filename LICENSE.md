@@ -135,7 +135,7 @@ Licensor reserves the right to modify this License at any time. Continued use af
 **Julio Cesar Mendez Tobar**  
 Software Architect & Developer  
 Created: 2026  
-Version: 1.0.0
+Version: 3.0.0
 
 ---
 

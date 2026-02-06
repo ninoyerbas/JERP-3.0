@@ -4,7 +4,7 @@ All notable changes to JERP 3.0 will be documented in this file.
 
 ---
 
-## [1.0.0] - 2026-02-06
+## [3.0.0] - 2026-02-06
 
 ### Initial Release
 
