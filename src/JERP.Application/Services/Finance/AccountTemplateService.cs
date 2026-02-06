@@ -26,12 +26,45 @@ public class AccountTemplateService : IAccountTemplateService
         _context = context;
         _logger = logger;
         
-        // Templates are embedded resources or in Data/Templates folder
-        _templatesPath = Path.Combine(AppContext.BaseDirectory, "Data", "Templates");
+        // Try multiple paths for template files
+        var possiblePaths = new[]
+        {
+            Path.Combine(AppContext.BaseDirectory, "Data", "Templates"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data", "Templates"),
+            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Templates")
+        };
+        
+        _templatesPath = possiblePaths.FirstOrDefault(Directory.Exists) 
+            ?? possiblePaths[0]; // Use first path as fallback
+        
+        if (!Directory.Exists(_templatesPath))
+        {
+            _logger.LogWarning("Templates directory not found at any of the expected paths. Using fallback: {TemplatesPath}", _templatesPath);
+        }
+        else
+        {
+            _logger.LogInformation("Template path set to: {TemplatesPath}", _templatesPath);
+        }
     }
 
     public async Task<List<AccountTemplateSummaryDto>> GetAvailableTemplatesAsync()
     {
+        // Ensure directory exists
+        if (!Directory.Exists(_templatesPath))
+        {
+            try
+            {
+                _logger.LogWarning("Templates directory not found: {Path}. Attempting to create...", _templatesPath);
+                Directory.CreateDirectory(_templatesPath);
+                _logger.LogInformation("Successfully created templates directory: {Path}", _templatesPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create templates directory: {Path}. Template loading may fail.", _templatesPath);
+                // Don't throw here - allow the method to continue and fail later when trying to load templates
+            }
+        }
+        
         var templates = new List<AccountTemplateSummaryDto>
         {
             new AccountTemplateSummaryDto
