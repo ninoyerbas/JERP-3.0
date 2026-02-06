@@ -56,25 +56,22 @@ public class BillDto
 {
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }
-    public Guid VendorId { get; set; }
-    public string? VendorName { get; set; }
-    public string? VendorNumber { get; set; }
     public required string BillNumber { get; set; }
-    public string? VendorInvoiceNumber { get; set; }
+    public Guid VendorId { get; set; }
+    public required string VendorName { get; set; }
     public DateTime BillDate { get; set; }
     public DateTime DueDate { get; set; }
-    public decimal Subtotal { get; set; }
+    public required string Status { get; set; }
+    public string? ReferenceNumber { get; set; }
+    public string? Description { get; set; }
+    public List<BillLineDto> LineItems { get; set; } = new();
+    public decimal SubTotal { get; set; }
     public decimal TaxAmount { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal AmountPaid { get; set; }
-    public decimal AmountDue => TotalAmount - AmountPaid;
-    public BillStatus Status { get; set; }
-    public bool IsPaid { get; set; }
-    public DateTime? PaymentDate { get; set; }
-    public Guid? JournalEntryId { get; set; }
+    public decimal AmountDue { get; set; }
     public string? Notes { get; set; }
-    public List<BillLineItemDto> LineItems { get; set; } = new();
-    public List<BillPaymentDto> Payments { get; set; } = new();
+    public DateTime? PaidAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -86,25 +83,18 @@ public class BillListDto
 {
     public Guid Id { get; set; }
     public required string BillNumber { get; set; }
-    public string? VendorInvoiceNumber { get; set; }
     public Guid VendorId { get; set; }
-    public string? VendorName { get; set; }
+    public required string VendorName { get; set; }
     public DateTime BillDate { get; set; }
     public DateTime DueDate { get; set; }
+    public required string Status { get; set; } // Draft, Submitted, Approved, Paid
+    public decimal SubTotal { get; set; }
+    public decimal TaxAmount { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal AmountPaid { get; set; }
-    public decimal AmountDue => TotalAmount - AmountPaid;
-    public BillStatus Status { get; set; }
-    public int DaysOverdue
-    {
-        get
-        {
-            if (Status == BillStatus.Paid || Status == BillStatus.Void)
-                return 0;
-            var days = (DateTime.Now - DueDate).Days;
-            return days > 0 ? days : 0;
-        }
-    }
+    public decimal AmountDue { get; set; }
+    public bool IsOverdue { get; set; }
+    public int DaysOverdue { get; set; }
 }
 
 /// <summary>

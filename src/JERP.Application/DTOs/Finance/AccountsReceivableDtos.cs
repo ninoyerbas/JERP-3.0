@@ -55,24 +55,25 @@ public class InvoiceDto
 {
     public Guid Id { get; set; }
     public Guid CompanyId { get; set; }
-    public Guid CustomerId { get; set; }
-    public string? CustomerName { get; set; }
-    public string? CustomerNumber { get; set; }
     public required string InvoiceNumber { get; set; }
+    public Guid CustomerId { get; set; }
+    public required string CustomerName { get; set; }
     public DateTime InvoiceDate { get; set; }
     public DateTime DueDate { get; set; }
-    public decimal Subtotal { get; set; }
+    public required string Status { get; set; }
+    public string? PONumber { get; set; }
+    public string? Description { get; set; }
+    public List<InvoiceLineDto> LineItems { get; set; } = new();
+    public decimal SubTotal { get; set; }
     public decimal TaxAmount { get; set; }
+    public decimal DiscountAmount { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal AmountPaid { get; set; }
-    public decimal AmountDue => TotalAmount - AmountPaid;
-    public InvoiceStatus Status { get; set; }
-    public bool IsPaid { get; set; }
-    public DateTime? PaymentDate { get; set; }
-    public Guid? JournalEntryId { get; set; }
+    public decimal AmountDue { get; set; }
     public string? Notes { get; set; }
-    public List<InvoiceLineItemDto> LineItems { get; set; } = new();
-    public List<InvoicePaymentDto> Payments { get; set; } = new();
+    public string? Terms { get; set; }
+    public DateTime? SentAt { get; set; }
+    public DateTime? PaidAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -85,23 +86,17 @@ public class InvoiceListDto
     public Guid Id { get; set; }
     public required string InvoiceNumber { get; set; }
     public Guid CustomerId { get; set; }
-    public string? CustomerName { get; set; }
+    public required string CustomerName { get; set; }
     public DateTime InvoiceDate { get; set; }
     public DateTime DueDate { get; set; }
+    public required string Status { get; set; } // Draft, Sent, Paid, Overdue, Cancelled
+    public decimal SubTotal { get; set; }
+    public decimal TaxAmount { get; set; }
     public decimal TotalAmount { get; set; }
     public decimal AmountPaid { get; set; }
-    public decimal AmountDue => TotalAmount - AmountPaid;
-    public InvoiceStatus Status { get; set; }
-    public int DaysOverdue
-    {
-        get
-        {
-            if (Status == InvoiceStatus.Paid || Status == InvoiceStatus.Void)
-                return 0;
-            var days = (DateTime.Now - DueDate).Days;
-            return days > 0 ? days : 0;
-        }
-    }
+    public decimal AmountDue { get; set; }
+    public bool IsOverdue { get; set; }
+    public int DaysOverdue { get; set; }
 }
 
 /// <summary>
