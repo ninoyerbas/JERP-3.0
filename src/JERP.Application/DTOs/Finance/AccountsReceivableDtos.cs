@@ -61,7 +61,8 @@ public class InvoiceDto
     public string? CustomerNumber { get; set; }
     public DateTime InvoiceDate { get; set; }
     public DateTime DueDate { get; set; }
-    public InvoiceStatus Status { get; set; }
+    public InvoiceStatus StatusEnum { get; set; }
+    public string Status { get; set; } = string.Empty;
     public string? PONumber { get; set; }
     public string? Description { get; set; }
     public decimal Subtotal { get; set; }
@@ -96,7 +97,8 @@ public class InvoiceListDto
     public string CustomerName { get; set; } = string.Empty;
     public DateTime InvoiceDate { get; set; }
     public DateTime DueDate { get; set; }
-    public InvoiceStatus Status { get; set; }
+    public InvoiceStatus StatusEnum { get; set; }
+    public string Status { get; set; } = string.Empty;
     public decimal SubTotal { get; set; }
     public decimal TaxAmount { get; set; }
     public decimal TotalAmount { get; set; }
