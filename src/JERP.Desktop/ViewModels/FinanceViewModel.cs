@@ -75,7 +75,7 @@ public partial class FinanceViewModel : ViewModelBase
 
         try
         {
-            var metrics = await _apiClient.GetAsync<dynamic>("api/finance/dashboard/metrics");
+            var metrics = await _apiClient.GetAsync<dynamic>("api/v1/finance/dashboard/metrics");
             
             if (metrics != null)
             {

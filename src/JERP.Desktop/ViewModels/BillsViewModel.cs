@@ -89,7 +89,7 @@ public partial class BillsViewModel : ViewModelBase
 
         try
         {
-            var query = $"api/finance/bills?dateFrom={BillDateFilterFrom:yyyy-MM-dd}&dateTo={BillDateFilterTo:yyyy-MM-dd}";
+            var query = $"api/v1/vendors/bills?dateFrom={BillDateFilterFrom:yyyy-MM-dd}&dateTo={BillDateFilterTo:yyyy-MM-dd}";
             
             if (BillStatusFilter != "All")
             {
@@ -195,7 +195,7 @@ public partial class BillsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var fullBill = await _apiClient.GetAsync<BillDto>($"api/finance/bills/{billSummary.Id}");
+            var fullBill = await _apiClient.GetAsync<BillDto>($"api/v1/vendors/bills/{billSummary.Id}");
             SelectedPayableDocument = fullBill;
         }
         catch (Exception ex)
@@ -223,7 +223,7 @@ public partial class BillsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>($"api/finance/bills/{bill.Id}/void", new { });
+            await _apiClient.PostAsync<object>($"api/v1/vendors/bills/{bill.Id}/void", new { });
             await LoadBillsPayableAsync();
         }
         catch (Exception ex)
@@ -242,7 +242,7 @@ public partial class BillsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var aging = await _apiClient.GetAsync<dynamic>("api/finance/bills/aging-report");
+            var aging = await _apiClient.GetAsync<dynamic>("api/v1/vendors/bills/aging-report");
             
             if (aging != null)
             {
@@ -269,7 +269,7 @@ public partial class BillsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var pdfBytes = await _apiClient.GetBytesAsync("api/finance/bills/aging-report/export");
+            var pdfBytes = await _apiClient.GetBytesAsync("api/v1/vendors/bills/aging-report/export");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var downloadsFolder = System.IO.Path.Combine(downloadsPath, "Downloads");

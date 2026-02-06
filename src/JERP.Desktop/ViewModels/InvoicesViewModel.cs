@@ -92,7 +92,7 @@ public partial class InvoicesViewModel : ViewModelBase
 
         try
         {
-            var query = $"api/finance/invoices?dateFrom={InvoiceDateFilterFrom:yyyy-MM-dd}&dateTo={InvoiceDateFilterTo:yyyy-MM-dd}";
+            var query = $"api/v1/finance/invoices?dateFrom={InvoiceDateFilterFrom:yyyy-MM-dd}&dateTo={InvoiceDateFilterTo:yyyy-MM-dd}";
             
             if (InvoiceStatusFilter != "All")
             {
@@ -200,7 +200,7 @@ public partial class InvoicesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var fullInvoice = await _apiClient.GetAsync<InvoiceDto>($"api/finance/invoices/{invoiceSummary.Id}");
+            var fullInvoice = await _apiClient.GetAsync<InvoiceDto>($"api/v1/finance/invoices/{invoiceSummary.Id}");
             SelectedReceivableDocument = fullInvoice;
         }
         catch (Exception ex)
@@ -221,7 +221,7 @@ public partial class InvoicesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>($"api/finance/invoices/{invoice.Id}/send", new { });
+            await _apiClient.PostAsync<object>($"api/v1/finance/invoices/{invoice.Id}/send", new { });
             await LoadInvoicesReceivableAsync();
         }
         catch (Exception ex)
@@ -249,7 +249,7 @@ public partial class InvoicesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>($"api/finance/invoices/{invoice.Id}/void", new { });
+            await _apiClient.PostAsync<object>($"api/v1/finance/invoices/{invoice.Id}/void", new { });
             await LoadInvoicesReceivableAsync();
         }
         catch (Exception ex)
@@ -268,7 +268,7 @@ public partial class InvoicesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var aging = await _apiClient.GetAsync<dynamic>("api/finance/invoices/aging-analysis");
+            var aging = await _apiClient.GetAsync<dynamic>("api/v1/finance/invoices/aging-analysis");
             
             if (aging != null)
             {
@@ -297,7 +297,7 @@ public partial class InvoicesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var pdfBytes = await _apiClient.GetBytesAsync("api/finance/invoices/aging-analysis/export");
+            var pdfBytes = await _apiClient.GetBytesAsync("api/v1/finance/invoices/aging-analysis/export");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var downloadsFolder = System.IO.Path.Combine(downloadsPath, "Downloads");
@@ -333,7 +333,7 @@ public partial class InvoicesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>("api/finance/invoices/send-reminders", new { });
+            await _apiClient.PostAsync<object>("api/v1/finance/invoices/send-reminders", new { });
         }
         catch (Exception ex)
         {
