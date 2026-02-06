@@ -1,5 +1,5 @@
 ==============================================================================
-JERP 2.0 - Enterprise Resource Planning System
+JERP 3.0 - Enterprise Resource Planning System
 Installation and Quick Start Guide
 ==============================================================================
 
@@ -112,9 +112,17 @@ Solution: Verify employee tax withholdings and deduction configurations
 Problem: PDF generation fails
 Solution: Ensure QuestPDF license is set to Community in API configuration
 
+# JERP 3.0
+
+![CI/CD Pipeline](https://github.com/ninoyerbas/JERP-3.0/actions/workflows/ci.yml/badge.svg)
+![CodeQL](https://github.com/ninoyerbas/JERP-3.0/actions/workflows/codeql.yml/badge.svg)
+[![codecov](https://codecov.io/gh/ninoyerbas/JERP-3.0/branch/main/graph/badge.svg)](https://codecov.io/gh/ninoyerbas/JERP-3.0)
+
+**Professional quality indicators!** 💎
+
 SUPPORT
 -------
-Email: support@jerp.com
+Email: ichbincesartobar@yahoo.com
 Website: https://www.jerp.com
 Documentation: https://docs.jerp.com
 
@@ -122,6 +130,6 @@ For bug reports and feature requests, please visit:
 https://github.com/ninoyerbas/JERP-3.0/issues
 
 ==============================================================================
-Copyright (c) 2024 JERP Corporation. All rights reserved.
+JULIO CESAR MENDEZ TOBAR Copyright (c) 2026 JERP Corporation. All rights reserved.
 Version 2.0.0
 ==============================================================================
