@@ -1,4 +1,5 @@
 using JERP.Application;
+using JERP.Compliance;
 using JERP.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -100,6 +101,9 @@ builder.Services.AddAuthorization();
 
 // Application Services
 builder.Services.AddApplicationServices();
+
+// Compliance Services (must be registered for Employee, Timesheet, and Payroll services)
+builder.Services.AddComplianceServices();
 
 // CORS
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
