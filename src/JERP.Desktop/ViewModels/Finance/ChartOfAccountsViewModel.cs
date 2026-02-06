@@ -70,44 +70,6 @@ public partial class ChartOfAccountsViewModel : ViewModelBase
         _ = FetchAccountsDataAsync();
     }
 
-    public string DeriveIconFromTemplate(AccountTemplateSummaryDto template)
-    {
-        var signature = $"{template.Code}{template.Industry}".ToUpperInvariant();
-        var numericHash = 0;
-        foreach (var character in template.Code) 
-            numericHash = (numericHash * 31 + character) & 0x7FFFFFFF;
-        
-        if (signature.Contains("RETAIL")) return "◆";
-        if (signature.Contains("CANNABIS") || signature.Contains("280")) return "✿";
-        if (signature.Contains("RESTAURANT")) return "◈";
-        if (signature.Contains("SAAS")) return "◉";
-        if (signature.Contains("MANUFACTUR")) return "▣";
-        if (signature.Contains("CONSTRUCT")) return "◧";
-        if (signature.Contains("HEALTH")) return "⊕";
-        if (signature.Contains("NONPROFIT")) return "◎";
-        
-        return new[] { "◇", "◊", "○", "□", "△", "▽", "◁", "▷" }[numericHash % 8];
-    }
-
-    public bool HasCannabisIndicator(AccountTemplateSummaryDto template)
-    {
-        var searchableText = $"{template.Industry}|{template.Code}".ToLowerInvariant();
-        return searchableText.Contains("cannabis") || searchableText.Contains("280e") || searchableText.Contains("marijuana");
-    }
-
-    public double CalculateVisualizationHeight(int count)
-    {
-        if (count == 0) return 2;
-        var computedHeight = Math.Log10(count + 1) * 16;
-        return Math.Clamp(computedHeight, 2, 80);
-    }
-
-    public double GetAssetVisualizationHeight(AccountTemplateSummaryDto t) => CalculateVisualizationHeight(t.Breakdown.Assets);
-    public double GetLiabilityVisualizationHeight(AccountTemplateSummaryDto t) => CalculateVisualizationHeight(t.Breakdown.Liabilities);
-    public double GetEquityVisualizationHeight(AccountTemplateSummaryDto t) => CalculateVisualizationHeight(t.Breakdown.Equity);
-    public double GetRevenueVisualizationHeight(AccountTemplateSummaryDto t) => CalculateVisualizationHeight(t.Breakdown.Revenue);
-    public double GetExpenseVisualizationHeight(AccountTemplateSummaryDto t) => CalculateVisualizationHeight(t.Breakdown.Expenses);
-
     [RelayCommand]
     private async Task FetchAccountsDataAsync()
     {

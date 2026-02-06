@@ -115,13 +115,13 @@
 
                                             <Grid Grid.Row="0" Margin="0,0,0,10">
                                                 <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding DataContext.DeriveIconFromTemplate(.), RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    <TextBlock Text="{Binding Converter={StaticResource TemplateIconConverter}}"
                                                              FontSize="24" Margin="0,0,10,0"/>
                                                     <TextBlock Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                                 </StackPanel>
                                                 <Border HorizontalAlignment="Right" Background="#4CAF50" 
                                                         CornerRadius="10" Padding="6,2"
-                                                        Visibility="{Binding DataContext.HasCannabisIndicator(.), RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                        Visibility="{Binding Converter={StaticResource CannabisIndicatorConverter}}">
                                                     <TextBlock Text="280E" FontSize="10" FontWeight="Bold" Foreground="White"/>
                                                 </Border>
                                             </Grid>
@@ -148,35 +148,35 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                                                        <Border Height="{Binding DataContext.GetAssetVisualizationHeight(.), RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        <Border Height="{Binding Converter={StaticResource BreakdownHeightConverter}, ConverterParameter=Assets}"
                                                                 Background="#3498DB" CornerRadius="2" MinHeight="2" VerticalAlignment="Bottom"/>
                                                         <TextBlock Text="{Binding Breakdown.Assets}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                                         <TextBlock Text="Assets" FontSize="9" HorizontalAlignment="Center" Opacity="0.6"/>
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="1" Margin="0,0,5,0">
-                                                        <Border Height="{Binding DataContext.GetLiabilityVisualizationHeight(.), RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        <Border Height="{Binding Converter={StaticResource BreakdownHeightConverter}, ConverterParameter=Liabilities}"
                                                                 Background="#E74C3C" CornerRadius="2" MinHeight="2" VerticalAlignment="Bottom"/>
                                                         <TextBlock Text="{Binding Breakdown.Liabilities}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                                         <TextBlock Text="Liabilities" FontSize="9" HorizontalAlignment="Center" Opacity="0.6"/>
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="2" Margin="0,0,5,0">
-                                                        <Border Height="{Binding DataContext.GetEquityVisualizationHeight(.), RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        <Border Height="{Binding Converter={StaticResource BreakdownHeightConverter}, ConverterParameter=Equity}"
                                                                 Background="#2ECC71" CornerRadius="2" MinHeight="2" VerticalAlignment="Bottom"/>
                                                         <TextBlock Text="{Binding Breakdown.Equity}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                                         <TextBlock Text="Equity" FontSize="9" HorizontalAlignment="Center" Opacity="0.6"/>
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="3" Margin="0,0,5,0">
-                                                        <Border Height="{Binding DataContext.GetRevenueVisualizationHeight(.), RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        <Border Height="{Binding Converter={StaticResource BreakdownHeightConverter}, ConverterParameter=Revenue}"
                                                                 Background="#F1C40F" CornerRadius="2" MinHeight="2" VerticalAlignment="Bottom"/>
                                                         <TextBlock Text="{Binding Breakdown.Revenue}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                                         <TextBlock Text="Revenue" FontSize="9" HorizontalAlignment="Center" Opacity="0.6"/>
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="4">
-                                                        <Border Height="{Binding DataContext.GetExpenseVisualizationHeight(.), RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        <Border Height="{Binding Converter={StaticResource BreakdownHeightConverter}, ConverterParameter=Expenses}"
                                                                 Background="#9B59B6" CornerRadius="2" MinHeight="2" VerticalAlignment="Bottom"/>
                                                         <TextBlock Text="{Binding Breakdown.Expenses}" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                                         <TextBlock Text="Expenses" FontSize="9" HorizontalAlignment="Center" Opacity="0.6"/>
@@ -208,7 +208,7 @@
                             
                             <Button Content="Apply Template" 
                                     Command="{Binding PerformTemplateImportCommand}"
-                                    IsEnabled="{Binding SelectedTemplate, Converter={StaticResource StringToVisibilityConverter}}"
+                                    IsEnabled="{Binding SelectedTemplate, Converter={StaticResource NullToBooleanConverter}}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     Height="35" MinWidth="140"/>
                         </StackPanel>
