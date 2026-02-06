@@ -430,3 +430,5 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
+/src/JERP.Application/Services/Employees
+src/JERP.Application/Services/Employees/EmployeeService.cs
