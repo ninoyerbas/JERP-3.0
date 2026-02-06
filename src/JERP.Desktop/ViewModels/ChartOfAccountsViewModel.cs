@@ -83,7 +83,7 @@ public partial class ChartOfAccountsViewModel : ViewModelBase
 
         try
         {
-            var query = $"api/finance/accounts?includeInactive={ShowInactiveAccounts}";
+            var query = $"api/v1/finance/accounts?includeInactive={ShowInactiveAccounts}";
             
             if (!string.IsNullOrWhiteSpace(AccountSearchFilter))
             {
@@ -186,7 +186,7 @@ public partial class ChartOfAccountsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PutAsync($"api/finance/accounts/{account.Id}/toggle-status", new { });
+            await _apiClient.PutAsync($"api/v1/finance/accounts/{account.Id}/toggle-status", new { });
             await LoadChartOfAccountsAsync();
         }
         catch (Exception ex)
@@ -205,7 +205,7 @@ public partial class ChartOfAccountsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>("api/finance/accounts/reconcile", new { });
+            await _apiClient.PostAsync<object>("api/v1/finance/accounts/reconcile", new { });
             await LoadChartOfAccountsAsync();
         }
         catch (Exception ex)
@@ -224,7 +224,7 @@ public partial class ChartOfAccountsViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var csvBytes = await _apiClient.GetBytesAsync("api/finance/accounts/export");
+            var csvBytes = await _apiClient.GetBytesAsync("api/v1/finance/accounts/export");
             
             var downloadsPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var downloadsFolder = Path.Combine(downloadsPath, "Downloads");

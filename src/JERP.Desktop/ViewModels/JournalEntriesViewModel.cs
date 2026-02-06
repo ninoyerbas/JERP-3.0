@@ -80,7 +80,7 @@ public partial class JournalEntriesViewModel : ViewModelBase
 
         try
         {
-            var query = $"api/finance/journal-entries?dateFrom={EntryDateFrom:yyyy-MM-dd}&dateTo={EntryDateTo:yyyy-MM-dd}";
+            var query = $"api/v1/finance/journal-entries?dateFrom={EntryDateFrom:yyyy-MM-dd}&dateTo={EntryDateTo:yyyy-MM-dd}";
             
             if (EntryStatusFilter != "All")
             {
@@ -162,7 +162,7 @@ public partial class JournalEntriesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>($"api/finance/journal-entries/{entry.Id}/post", new { });
+            await _apiClient.PostAsync<object>($"api/v1/finance/journal-entries/{entry.Id}/post", new { });
             await LoadJournalEntriesAsync();
         }
         catch (Exception ex)
@@ -183,7 +183,7 @@ public partial class JournalEntriesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>($"api/finance/journal-entries/{entry.Id}/reverse", new { });
+            await _apiClient.PostAsync<object>($"api/v1/finance/journal-entries/{entry.Id}/reverse", new { });
             await LoadJournalEntriesAsync();
         }
         catch (Exception ex)
@@ -202,7 +202,7 @@ public partial class JournalEntriesViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var validation = await _apiClient.PostAsync<dynamic>("api/finance/journal-entries/validate-balances", new { });
+            var validation = await _apiClient.PostAsync<dynamic>("api/v1/finance/journal-entries/validate-balances", new { });
             
             if (validation != null && validation.hasIssues == true)
             {

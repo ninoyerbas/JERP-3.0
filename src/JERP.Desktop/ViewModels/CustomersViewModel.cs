@@ -95,7 +95,7 @@ public partial class CustomersViewModel : ViewModelBase
 
         try
         {
-            var query = $"api/finance/customers?page={CurrentPageIndex}&pageSize={RecordsPerPage}&includeInactive={ShowInactiveClients}";
+            var query = $"api/v1/finance/customers?page={CurrentPageIndex}&pageSize={RecordsPerPage}&includeInactive={ShowInactiveClients}";
             
             if (!string.IsNullOrWhiteSpace(ClientSearchText))
             {
@@ -240,7 +240,7 @@ public partial class CustomersViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            var exposure = await _apiClient.GetAsync<dynamic>("api/finance/customers/credit-exposure");
+            var exposure = await _apiClient.GetAsync<dynamic>("api/v1/finance/customers/credit-exposure");
             
             if (exposure != null)
             {
@@ -268,7 +268,7 @@ public partial class CustomersViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PostAsync<object>($"api/finance/customers/{customer.Id}/verify-license", new { });
+            await _apiClient.PostAsync<object>($"api/v1/finance/customers/{customer.Id}/verify-license", new { });
             await LoadCustomerPortfolioAsync();
         }
         catch (Exception ex)
@@ -289,7 +289,7 @@ public partial class CustomersViewModel : ViewModelBase
         try
         {
             IsBusy = true;
-            await _apiClient.PutAsync($"api/finance/customers/{customer.Id}/toggle-status", new { });
+            await _apiClient.PutAsync($"api/v1/finance/customers/{customer.Id}/toggle-status", new { });
             await LoadCustomerPortfolioAsync();
         }
         catch (Exception ex)
