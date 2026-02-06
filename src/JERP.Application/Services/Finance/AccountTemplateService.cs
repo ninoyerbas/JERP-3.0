@@ -37,7 +37,14 @@ public class AccountTemplateService : IAccountTemplateService
         _templatesPath = possiblePaths.FirstOrDefault(Directory.Exists) 
             ?? possiblePaths[0]; // Use first path as fallback
         
-        _logger.LogInformation("Template path set to: {TemplatesPath}", _templatesPath);
+        if (!Directory.Exists(_templatesPath))
+        {
+            _logger.LogWarning("Templates directory not found at any of the expected paths. Using fallback: {TemplatesPath}", _templatesPath);
+        }
+        else
+        {
+            _logger.LogInformation("Template path set to: {TemplatesPath}", _templatesPath);
+        }
     }
 
     public async Task<List<AccountTemplateSummaryDto>> GetAvailableTemplatesAsync()
@@ -45,8 +52,17 @@ public class AccountTemplateService : IAccountTemplateService
         // Ensure directory exists
         if (!Directory.Exists(_templatesPath))
         {
-            _logger.LogWarning("Templates directory not found: {Path}. Creating...", _templatesPath);
-            Directory.CreateDirectory(_templatesPath);
+            try
+            {
+                _logger.LogWarning("Templates directory not found: {Path}. Attempting to create...", _templatesPath);
+                Directory.CreateDirectory(_templatesPath);
+                _logger.LogInformation("Successfully created templates directory: {Path}", _templatesPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create templates directory: {Path}. Template loading may fail.", _templatesPath);
+                // Don't throw here - allow the method to continue and fail later when trying to load templates
+            }
         }
         
         var templates = new List<AccountTemplateSummaryDto>
