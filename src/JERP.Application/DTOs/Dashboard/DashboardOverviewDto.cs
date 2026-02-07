@@ -22,4 +22,9 @@ public class DashboardOverviewDto
     public decimal CashBalance { get; set; }
     public int ActiveEmployeesCount { get; set; }
     public int PendingTimesheetsCount { get; set; }
+    
+    // Alias properties for backward compatibility
+    public int CriticalViolations { get; set; }
+    public int ActiveEmployees => ActiveEmployeesCount;
+    public int PendingTimesheets => PendingTimesheetsCount;
 }
