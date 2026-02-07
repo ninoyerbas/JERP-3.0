@@ -226,10 +226,10 @@ public static class DbInitializer
         var adminUser = new User
         {
             Username = "admin",
-            Email = "admin@jerp.com",
+            Email = "ichbincesartobar@yahoo.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
-            FirstName = "System",
-            LastName = "Administrator",
+            FirstName = "Julio",
+            LastName = "Cesar Mendez Tobar Jr.",
             IsActive = true
         };
 
