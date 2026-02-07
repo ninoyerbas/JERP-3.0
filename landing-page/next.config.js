@@ -14,6 +14,7 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    CHECKPOINT_DISABLE: process.env.CHECKPOINT_DISABLE || '1',
   },
 };
 

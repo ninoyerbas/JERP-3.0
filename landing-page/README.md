@@ -50,6 +50,12 @@ cp .env.example .env.local
 Edit `.env.local` with your actual values:
 
 ```env
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/jerp_partners?schema=public
+
+# Prisma (disables telemetry to avoid checkpoint.prisma.io connection issues)
+CHECKPOINT_DISABLE=1
+
 # Stripe Keys (get from https://dashboard.stripe.com/apikeys)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_key_here
 STRIPE_SECRET_KEY=sk_test_your_key_here
