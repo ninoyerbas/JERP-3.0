@@ -3,6 +3,7 @@ using JERP.Core.Entities;
 using JERP.Core.Entities.Finance;
 using JERP.Core.Entities.Inventory;
 using JERP.Core.Entities.SalesOrders;
+using JERP.Core.Entities.Licensing;
 
 namespace JERP.Infrastructure.Data
 {
@@ -74,6 +75,12 @@ namespace JERP.Infrastructure.Data
         public DbSet<SOShipmentLine> SOShipmentLines => Set<SOShipmentLine>();
         public DbSet<SalesReturn> SalesReturns => Set<SalesReturn>();
         public DbSet<SalesReturnLine> SalesReturnLines => Set<SalesReturnLine>();
+
+        // DbSets - Licensing
+        public DbSet<License> Licenses => Set<License>();
+        public DbSet<PlanFeature> PlanFeatures => Set<PlanFeature>();
+        public DbSet<SubscriptionHistory> SubscriptionHistories => Set<SubscriptionHistory>();
+        public DbSet<EmployeeCountTracking> EmployeeCountTrackings => Set<EmployeeCountTracking>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
